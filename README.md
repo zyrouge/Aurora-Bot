@@ -14,6 +14,8 @@
 
 Aurora is open-sourced to show the transparency of the bot! Also you guys can fix my mistakes in the code.
 
-# Guide
+### Can I open pull requests?
 
-Soon!
+Yes, sure!
+
+# [Guide](https://guide.auroradiscordbot.ga "Guide")
