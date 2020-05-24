@@ -25,6 +25,9 @@ const init = async () => {
     console.log(`${String.fromCharCode(160)}`);
     console.log(`Starting Aurora...`);
 
+    /* Redefine Console */
+    require("./Utils/Console")();
+
     /* Lets get started */
     const fs = require('fs');
     const chalk = require('chalk');
