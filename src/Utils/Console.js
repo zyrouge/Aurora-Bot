@@ -8,7 +8,7 @@ module.exports  = () => {
     const time = moment().tz('Asia/Kolkata').format(`HH:mm:ss zz`);
 
     /* Normal */
-    const normalPath = `/app/logs/normal/${date}.log`;
+    const normalPath = `/app/logs/${date}-normal.log`;
     fs.closeSync(fs.openSync(normalPath, 'a'));
     const normalFile = fs.createWriteStream(normalPath, { flags: 'a' });
 
@@ -19,7 +19,7 @@ module.exports  = () => {
     }
 
     /* Error */
-    const errorPath = `/app/logs/error/${date}.log`;
+    const errorPath = `/app/logs/${date}-error.log`;
     fs.closeSync(fs.openSync(errorPath, 'a'));
     const errorFile = fs.createWriteStream(errorPath, { flags: 'a' });
 
