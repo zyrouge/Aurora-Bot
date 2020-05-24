@@ -118,14 +118,14 @@ module.exports.start = async client => {
   server.use((req, res, next) => {
     /* Step 1 */
     const authorization = req.headers["authorization"];
-    if (!authorization) {console.log('1');
+    if (!authorization) {
       res.status(401).end(`Unauthorised`);
       return;
     }
     
     /* Step 2 */
     const password = req.headers["password"];
-    if (!password) {console.log('2');
+    if (!password) {
       res.status(401).end(`Unauthorised`);
       return;
     }
