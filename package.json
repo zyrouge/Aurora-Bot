@@ -1,11 +1,11 @@
 {
-  "name": "seikatsu",
+  "name": "aurora",
   "version": "1.0.0",
-  "description": "Best Leveling Bot in Discord!",
+  "description": "Best Bot in Discord!",
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node-dev ."
   },
   "keywords": [
     "discord"
@@ -16,25 +16,23 @@
     "node": "12.x"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
+    "canvas": "^2.6.1",
     "chalk": "^4.0.0",
+    "chart.js": "^2.9.3",
     "command-line-args": "^5.1.1",
+    "deep-diff": "^1.0.2",
+    "dotenv": "^8.2.0",
     "eris": "^0.13.1",
     "eris-additions": "^1.4.1",
     "express": "^4.17.1",
-    "moment": "^2.26.0",
-    "moment-timezone": "^0.5.31",
-    "sequelize": "^5.21.8",
-    "sqlite3": "^4.2.0",
-    "axios": "^0.19.2",
-    "moment-duration-format": "^2.2.2",
-    "canvas": "^2.6.1",
-    "millify": "^3.2.1",
-    "chart.js": "^2.9.3",
-    "erlpack": "^0.1.3",
-    "zlib-sync": "^0.1.6",
     "lodash": "^4.17.15",
-    "deep-diff": "^1.0.2",
-    "figlet": "^1.4.0"
+    "millify": "^3.2.1",
+    "moment": "^2.26.0",
+    "moment-duration-format": "^2.3.2",
+    "moment-timezone": "^0.5.31",
+    "sequelize": "^5.21.11",
+    "sqlite3": "^4.2.0"
   }
 }
