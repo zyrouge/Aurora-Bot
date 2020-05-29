@@ -1,3 +1,8 @@
+/** 
+ * @author ZYROUGE
+ * @license MIT
+*/
+
 module.exports  = () => {
     const fs = require("fs");
     const path = require("path");
