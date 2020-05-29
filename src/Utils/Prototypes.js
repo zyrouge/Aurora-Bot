@@ -28,7 +28,7 @@ module.exports = () => {
     
     /* Eris */
     const Eris = require('eris');
-    const Endpoints = require("eris/lib/rest/Endpoints");
+    const Endpoints = require(require("path").resolve("node_modules", "eris", "lib", "rest", "Endpoints"));
     Object.defineProperties(Eris.Client.prototype, {
         fetchUser: {
             value: function(userID) {

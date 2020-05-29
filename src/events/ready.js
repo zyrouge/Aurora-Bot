@@ -11,6 +11,5 @@ module.exports = class {
     async run() {
         const chalk = require('chalk');
         console.log(`Logged in as ${chalk.greenBright(`${this.client.user.username}#${this.client.user.discriminator}`)}`);
-        console.log(chalk.greenBright(`Logged in at: ${require("../Utils/getTime")()}`));
     }
 }

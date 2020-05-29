@@ -3,6 +3,7 @@
  * @license MIT
 */
 
+require('dotenv').config();
 const Aurora = require(`./base/Client`);
 const client = new Aurora(require(`../config`).token, {
     firstShardID: 0,
