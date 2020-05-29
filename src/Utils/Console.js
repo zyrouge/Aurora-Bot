@@ -15,8 +15,19 @@ module.exports  = () => {
 
     const consoleLog = console.log;
     console.log = function(log) {
-        consoleLog(`[${chalk.gray(`${date} ${time}`)}] ${log}`);
+        consoleLog(`${chalk.gray(`${date} ${time}`)} [${chalk.blueBright("LOG")}] ${log}`);
         normalFile.write(`[${time}] ${log}\n`);
+    }
+
+    /* Warn */
+    const warnPath = path.resolve(`src`, `logs`) + `/${date}-warn.log`;
+    fs.closeSync(fs.openSync(warnPath, 'a'));
+    const warnFile = fs.createWriteStream(warnPath, { flags: 'a' });
+
+    const consoleWarn = console.warn;
+    console.warn = function(log) {
+        consoleWarn(`${chalk.gray(`${date} ${time}`)} [${chalk.yellowBright("WARN")}] ${log}`);
+        warnFile.write(`[${time}] ${log}\n`);
     }
 
     /* Error */
@@ -26,7 +37,7 @@ module.exports  = () => {
 
     const consoleError = console.error;
     console.error = function(log) {
-        consoleError(`[${chalk.gray(`${date} ${time}`)}] ${log}`);
-        errorFile.write(`[${chalk.gray(`${date} ${time}`)}] ${log}\n`);
+        consoleError(`${chalk.gray(`${date} ${time}`)} [${chalk.redBright("ERR")}] ${log}`);
+        errorFile.write(`[${time}] ${log}\n`);
     }
 }
