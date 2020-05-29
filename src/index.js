@@ -18,23 +18,20 @@ const client = new Aurora(require(`../config`).token, {
 
 /* Initialize */
 const init = async () => {
+    const chalk = require('chalk');
+    const fs = require('fs');
+    const path = require('path');
+
     console.log(`${String.fromCharCode(160)}`);
-    console.log(client.utils.ascii.Aurora);
+    console.log(chalk.magentaBright(client.utils.ascii.Aurora));
     console.log(`${String.fromCharCode(160)}`);
     console.log(`Made by ZYROUGE | https://github.com/zyrouge`);
-    console.log(`Source Code: https://github.com/zyrouge/aurorabot`);
+    console.log(`Source Code: https://github.com/zyrouge/aurora-bot`);
     console.log(`${String.fromCharCode(160)}`);
     console.log(`Starting Aurora...`);
 
-    /* Redefine Console */
+    /* Redefine Console + Prototypes*/
     require("./Utils/Console")();
-
-    /* Lets get started */
-    const fs = require('fs');
-    const chalk = require('chalk');
-    const path = require('path');
-
-    /* Prototypes */
     require("./Utils/Prototypes")();
 
     /* Commands */
@@ -64,7 +61,7 @@ const init = async () => {
                     } else SKIPPED += 1;
                 });
                 console.log(`Loaded ${chalk.blueBright(`${LOADED}`)} Command(s) in ${chalk.blueBright(`${category.toProperCase()}`)}`);
-                if(SKIPPED) console.log(`Skipped ${chalk.yellow(`${SKIPPED}`)} Command(s) in ${chalk.blueBright(`${category.toProperCase()}`)}`);
+                if(SKIPPED) console.warn(`Skipped ${chalk.yellow(`${SKIPPED}`)} Command(s) in ${chalk.blueBright(`${category.toProperCase()}`)}`);
             });
         });
     });
