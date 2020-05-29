@@ -6,7 +6,7 @@
 const router = require('express').Router();
 
 router.get(`/`, (req, res) => {
-    res.json(req.client.guilds.map(x => JSON.parse(`{ "name": "${x.name}", "id": "${x.name}" }`)));
+    res.json(req.client.guilds.map(x => JSON.parse(`{ "name": "${x.name}", "id": "${x.id}" }`)));
 });
 
 router.get(`/:guildID/info`, (req, res) => {
