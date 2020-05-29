@@ -13,9 +13,9 @@ dependencies:
   figlet: 1.4.0
   lodash: 4.17.15
   millify: 3.2.1
-  moment: 2.25.3
+  moment: 2.26.0
   moment-duration-format: 2.3.2
-  moment-timezone: 0.5.28
+  moment-timezone: 0.5.31
   sequelize: 5.21.8
   sqlite3: 4.2.0
   zlib-sync: 0.1.6
@@ -771,10 +771,20 @@ packages:
     dev: false
     resolution:
       integrity: sha512-TDJkZvAyKIVWg5EtVqRzU97w0Rb0YVbfpqyjgu6GwXCAohVRqwZjf4fOzDE6p1Ch98Sro/8hQQi65WDXW5STPw==
+  /moment-timezone/0.5.31:
+    dependencies:
+      moment: 2.26.0
+    dev: false
+    resolution:
+      integrity: sha512-+GgHNg8xRhMXfEbv81iDtrVeTcWt0kWmTEY1XQK14dICTXnWJnT0dxdlPspwqF3keKMVPXwayEsk1DI0AA/jdA==
   /moment/2.25.3:
     dev: false
     resolution:
       integrity: sha512-PuYv0PHxZvzc15Sp8ybUCoQ+xpyPWvjOuK72a5ovzp2LI32rJXOiIfyoFoYvG3s6EwwrdkMyWuRiEHSZRLJNdg==
+  /moment/2.26.0:
+    dev: false
+    resolution:
+      integrity: sha512-oIixUO+OamkUkwjhAVE18rAMfRJNsNe/Stid/gwHSOfHrOtw9EhAY2AHvdKZ/k/MggcYELFCJz/Sn2pL8b8JMw==
   /ms/2.0.0:
     dev: false
     resolution:
@@ -1410,9 +1420,9 @@ specifiers:
   figlet: ^1.4.0
   lodash: ^4.17.15
   millify: ^3.2.1
-  moment: ^2.25.3
+  moment: ^2.26.0
   moment-duration-format: ^2.2.2
-  moment-timezone: ^0.5.28
+  moment-timezone: ^0.5.31
   sequelize: ^5.21.8
   sqlite3: ^4.2.0
   zlib-sync: ^0.1.6

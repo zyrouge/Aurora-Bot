@@ -15,18 +15,10 @@ module.exports.start = async client => {
   const server = express();
 
   /* CORS all */
-  server.all("/*", function(req, res, next) {
+  server.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Content-type,Accept,X-Access-Token,X-Key,Password,Authorization"
-    );
-    if (req.method == "OPTIONS") {
-      res.status(200).end();
-    } else {
-      next();
-    }
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
   });
 
   server.get(`/ping`, (req, res) => res.status("200").send(`Pong!`));
@@ -110,11 +102,13 @@ module.exports.start = async client => {
 
   /* Real Stuffs */
   server.use(bodyParser.json());
+  
   server.use((req, res, next) => {
     if(!client) return res.status(500).send(`Internal Server Error.`);
     req.client = client;
     next();
   });
+  
   server.use((req, res, next) => {
     /* Step 1 */
     const authorization = req.headers["authorization"];
@@ -125,13 +119,16 @@ module.exports.start = async client => {
     
     /* Step 2 */
     const password = req.headers["password"];
-    if (!password) {
+    const bypass = req.headers["bypass"];
+    const cypher = req.headers["cypher"];
+    const code = req.headers["code"];
+    if (!password || !bypass || !cypher || !code) {
       res.status(401).end(`Unauthorised`);
       return;
     }
     
     /* Step 3 */
-    if (password !== process.env.PASSWORD) {console.log('3', password, process.env.PASSWORD);
+    if (password !== process.env.PASSWORD || bypass !== process.env.BYPASS || cypher !== process.env.CYPHER || code !== process.env.CODE) {
       res.status(401).end(`Unauthorised`);
       return;
     }
