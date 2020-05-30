@@ -6,7 +6,7 @@
 /* Prerequisites */
 global.startTime = Date.now();
 require('dotenv').config();
-require('./Utils/Starter-Logs')();
+require('./Utils/Starter')();
 
 /* Aurora */
 const Aurora = require(`./base/Client`);
@@ -23,6 +23,9 @@ const client = new Aurora(require(`../config`).token, {
 
 /* Initialize */
 const init = async () => {
+    /* Updater */
+    await require('./Utils/Starter').update();
+
     const chalk = require('chalk');
     const fs = require('fs');
     const path = require('path');

@@ -13,8 +13,35 @@ module.exports.checkVersions = () => new Promise(async (resolve, reject) => {
 });
 
 module.exports.updateMaster = () => new Promise(async (resolve, reject) => {
-    exec("git pull origin master", (stderr, stdout) => {
+    try {
+        await this.fetchMaster();
+        await this.resetMaster();
+        await this.pullMaster();
+        resolve(true);
+    } catch (error) {
+        reject(error);
+    }
+});
+
+module.exports.fetchMaster = () => new Promise((resolve, reject) => {
+    exec("git fetch origin master", (stderr, stdout) => {
         if(stderr) return reject(`Something went wrong. ${stderr}`);
         resolve(stdout && stdout.includes("Already up to date.") ? false : true);
+    });
+});
+
+module.exports.resetMaster = () => new Promise((resolve, reject) => {
+    exec("git reset --hard origin/master", (stderr, stdout) => {
+        if(stderr) return reject(`Something went wrong. ${stderr}`);
+        resolve(true);
+    });
+});
+
+module.exports.pullMaster = ({ force }) => new Promise((resolve, reject) => {
+    const command = "git pull origin master";
+    if(force) command += " --force";
+    exec(command, (stderr, stdout) => {
+        if(stderr) return reject(`Something went wrong. ${stderr}`);
+        resolve(true);
     });
 });

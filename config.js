@@ -7,7 +7,7 @@ const config = {
     state: process.env.NODE_ENV || "unknown",
     prod: process.env.NODE_ENV === "production",
     token: process.env.DISCORDTOKEN,
-    prefix: this.prod ? "a&" : "a$",
+    prefix: process.env.NODE_ENV === "production" ? "a&" : "a$",
     invite: `https://discord.com/oauth2/authorize?client_id=702808552892530829&permissions=2146827775&response_type=code&scope=bot`,
     support: "https://discord.com/invite/8KV5zCg",
     dashboard: "https://auroradiscordbot.ga",
