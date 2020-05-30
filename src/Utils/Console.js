@@ -1,3 +1,8 @@
+/** 
+ * @author ZYROUGE
+ * @license GPL-3.0
+*/
+
 module.exports  = () => {
     const fs = require("fs");
     const path = require("path");

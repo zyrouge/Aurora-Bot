@@ -3,7 +3,7 @@ const Command = require(path.resolve(`src`, `base`, `Command`));
 
 /** 
  * @author ZYROUGE
- * @license MIT
+ * @license GPL-3.0
 */
 
 class _Command extends Command {
