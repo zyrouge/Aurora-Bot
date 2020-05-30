@@ -1,6 +1,6 @@
 {
   "name": "aurora",
-  "version": "0.0.2-alpha",
+  "version": "0.0.3-alpha",
   "description": "Best Bot in Discord!",
   "main": "src/index.js",
   "scripts": {
