@@ -3,7 +3,12 @@
  * @license GPL-3.0
 */
 
+/* Prerequisites */
+global.startTime = Date.now();
 require('dotenv').config();
+require('./Utils/Starter-Logs')();
+
+/* Aurora */
 const Aurora = require(`./base/Client`);
 const client = new Aurora(require(`../config`).token, {
     firstShardID: 0,
@@ -12,7 +17,7 @@ const client = new Aurora(require(`../config`).token, {
     defaultImageFormat: "png",
     defaultImageSize: 1024,
     disableEvents: [
-        "TYPING_START",
+        "TYPING_START"
     ]
 });
 
@@ -21,14 +26,6 @@ const init = async () => {
     const chalk = require('chalk');
     const fs = require('fs');
     const path = require('path');
-
-    console.log(`${String.fromCharCode(160)}`);
-    console.log(chalk.magentaBright(client.utils.ascii.Aurora));
-    console.log(`${String.fromCharCode(160)}`);
-    console.log(`Made by ZYROUGE | https://github.com/zyrouge`);
-    console.log(`Source Code: https://github.com/zyrouge/aurora-bot`);
-    console.log(`${String.fromCharCode(160)}`);
-    console.log(`Starting Aurora...`);
 
     /* Redefine Console + Prototypes*/
     require("./Utils/Console")();
@@ -78,20 +75,27 @@ const init = async () => {
         console.log(`Loaded ${chalk.blueBright(`${files.length}`)} Event(s)`);
     });
 
+    /* API */
+    await client.api().then((port) => console.log(`Started ${chalk.greenBright(`API`)} (Port ${port})`));
+    /* Database */
+    await client.database.Guild.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Guild`)} (Database)`));
+    await client.database.Member.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Member`)} (Database)`));
+    await client.database.ModCase.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`ModCase`)} (Database)`));
+    await client.database.ReactionRole.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`ReactionRole`)} (Database)`));
+    await client.database.Role.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Role`)} (Database)`));
+    await client.database.Settings.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Settings`)} (Database)`));
+    await client.database.TextChannel.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`TextChannel`)} (Database)`));
+    await client.database.User.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`User`)} (Database)`));
+    
     /* Login */
-    client.connect()
-    .then(() => {
-        /* API */
-        client.api().then((port) => console.log(`Started ${chalk.greenBright(`API`)} (Port ${port})`));
-        /* Database */
-        client.database.Guild.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Guild`)} (Database)`));
-        client.database.Member.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Member`)} (Database)`));
-        client.database.ModCase.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`ModCase`)} (Database)`));
-        client.database.ReactionRole.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`ReactionRole`)} (Database)`));
-        client.database.Role.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Role`)} (Database)`));
-        client.database.Settings.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Settings`)} (Database)`));
-        client.database.TextChannel.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`TextChannel`)} (Database)`));
-        client.database.User.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`User`)} (Database)`));
+    process.stdout.write(`[${chalk.redBright("BOOT")}] Build Completed!\n`);
+    process.stdout.write(`[${chalk.redBright("BOOT")}] Connecting to Discord API...\n`);
+    await client.connect()
+    .catch(e => {
+        process.stdout.write(`[${chalk.redBright("BOOT")}] Booting failed!`);
+        console.error(e);
+        process.stdout.write(`[${chalk.redBright("BOOT")}] Exiting...`);
+        process.exit(0);
     });
 };
 

@@ -4,7 +4,11 @@
 */
 
 const { Sequelize } = require("sequelize");
+const fs = require("fs");
 const path = require("path");
+
+/* Check 'storage' */
+if(!fs.existsSync(__dirname + "/../../storage")) fs.mkdirSync(__dirname + "/../../storage");
 
 /* Sequelize Client */
 const sequelize = new Sequelize({

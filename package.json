@@ -4,14 +4,14 @@
   "description": "Best Bot in Discord!",
   "main": "src/index.js",
   "scripts": {
-    "start": "node .",
-    "dev": "node-dev ."
+    "start": "cross-env NODE_ENV=production node .",
+    "dev": "cross-env NODE_ENV=development node-dev ."
   },
   "keywords": [
     "discord"
   ],
   "author": "ZYROUGE",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "engines": {
     "node": "12.x"
   },
@@ -34,5 +34,12 @@
     "moment-timezone": "^0.5.31",
     "sequelize": "^5.21.11",
     "sqlite3": "^4.2.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.2"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/zyrouge/aurora-bot.git"
   }
 }

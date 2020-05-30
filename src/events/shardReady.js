@@ -11,7 +11,7 @@ module.exports = class {
     async run(shardID) {
         const shard = this.client.shards.get(shardID);
         shard.editStatus("online", {
-            name: `${this.client.guilds.size} Server(s) | a&help | Shard ${shard.id}/${this.client.shards.size}`,
+            name: `${this.client.guilds.size} Servers | ${this.client.config.prefix}help | Shard ${shard.id}/${this.client.shards.size}`,
             type: 3
         });
     }
