@@ -37,7 +37,7 @@ module.exports.resetMaster = () => new Promise((resolve, reject) => {
     });
 });
 
-module.exports.pullMaster = ({ force }) => new Promise((resolve, reject) => {
+module.exports.pullMaster = (options = {}) => new Promise((resolve, reject) => {
     const command = "git pull origin master";
     if(force) command += " --force";
     exec(command, (stderr, stdout) => {
