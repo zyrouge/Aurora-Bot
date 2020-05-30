@@ -38,8 +38,8 @@ module.exports.resetMaster = () => new Promise((resolve, reject) => {
 });
 
 module.exports.pullMaster = (options = {}) => new Promise((resolve, reject) => {
-    const command = "git pull origin master";
-    if(force) command += " --force";
+    let command = "git pull origin master";
+    if(options.force) command += " --force";
     exec(command, (stderr, stdout) => {
         if(stderr) return reject(`Something went wrong. ${stderr}`);
         resolve(true);
