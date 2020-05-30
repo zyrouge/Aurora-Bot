@@ -1,6 +1,6 @@
 /** 
  * @author ZYROUGE
- * @license MIT
+ * @license GPL-3.0
 */
 
 function colors() {
