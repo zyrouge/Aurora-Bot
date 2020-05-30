@@ -23,6 +23,9 @@ const client = new Aurora(require(`../config`).token, {
 
 /* Initialize */
 const init = async () => {
+    /* Updater */
+    await require('./Utils/Starter').update();
+
     const chalk = require('chalk');
     const fs = require('fs');
     const path = require('path');

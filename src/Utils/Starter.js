@@ -15,23 +15,30 @@ module.exports = () => {
     process.stdout.write(`${String.fromCharCode(160)}\n`);
     process.stdout.write(`[${chalk.redBright("BOOT")}] Environment - ${chalk.cyanBright(`${process.env.NODE_ENV || "unknown"}`)}\n`);
 
-    if(settings.update.autoupdate) {
-        const UPDATER = require(path.resolve("src", "Utils", "Autoupdater"));
-        UPDATER.checkVersions()
-        .then(info => {
-            if(info.same) return process.stdout.write(`[${chalk.redBright("BOOT")}] Bot up-to date\n`);
-            process.stdout.write(`[${chalk.redBright("BOOT")}] Updating bot to ${chalk.bgRedBright(`v${info.latest}`)}\n`);
-            UPDATER.updateMaster()
-            .then(() => {
+    process.stdout.write(`[${chalk.redBright("BOOT")}] Building bot...\n`);
+}
+
+module.exports.update = () => new Promise(async (resolve) => {
+    try {
+        process.stdout.write(`[${chalk.redBright("BOOT")}] Checking for latest version...\n`);
+
+        if(settings.update.autoupdate) {
+            const UPDATER = require(path.resolve("src", "Utils", "Autoupdater"));
+            const info = await UPDATER.checkVersions()
+            if(info.same) {
+                process.stdout.write(`[${chalk.redBright("BOOT")}] Bot up-to date\n`);
+            } else {
+                process.stdout.write(`[${chalk.redBright("BOOT")}] Updating bot to ${chalk.bgRedBright(`v${info.latest}`)}\n`);
+                await UPDATER.updateMaster()
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Updated bot to ${chalk.bgRedBright(`v${info.latest}`)}\n`);
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Exiting... (Manually restart it if needed)\n`);
                 process.exit();
-            });
-        })
-        .catch(e => {
-            process.stdout.write(`[${chalk.redBright("BOOT")}] Failed to update with reason ${e}\n`);
-        })
-    } else process.stdout.write(`[${chalk.redBright("BOOT")}] Skipped Updating\n`);
+            }
+        } else process.stdout.write(`[${chalk.redBright("BOOT")}] Skipped Updating\n`);
 
-    process.stdout.write(`[${chalk.redBright("BOOT")}] Building bot...\n`);
-}
+        process.stdout.write(`[${chalk.redBright("BOOT")}] Starting bot...\n`);
+        resolve();
+    } catch(err) {
+        process.stdout.write(`[${chalk.redBright("BOOT")}] Failed to update with reason ${err}\n`);
+    }
+});
