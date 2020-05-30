@@ -24,12 +24,12 @@ module.exports.update = () => new Promise(async (resolve) => {
 
         if(settings.update.autoupdate) {
             const UPDATER = require(path.resolve("src", "Utils", "Autoupdater"));
-            const info = await UPDATER.checkVersions()
+            const info = await UPDATER.check();
             if(info.same) {
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Bot up-to date\n`);
             } else {
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Updating bot to ${chalk.bgRedBright(`v${info.latest}`)}\n`);
-                await UPDATER.updateMaster()
+                await UPDATER.update();
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Updated bot to ${chalk.bgRedBright(`v${info.latest}`)}\n`);
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Exiting... (Manually restart it if needed)\n`);
                 process.exit();
