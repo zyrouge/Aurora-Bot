@@ -15,17 +15,22 @@ module.exports.check = () => new Promise(async (resolve, reject) => {
     try {
         let response;
         if(settings.update && settings.update.includeFixes) {
+            await this.fetch(); // Fetches branch to determine commit IDs
             exec(`git diff ${remote}/${branch} ${branch}`, (stderr,) => {
                 if(stderr) return reject(`Something went wrong. ${stderr}`);
+
                 let currentCommitID, latestCommitID;
+
                 exec(`git rev-parse ${branch}`, (commitErr, commitID) => {
                     if(commitErr) return reject(`Something went wrong while fetching current commit ID. ${stderr}`);
                     currentCommitID = commitID;
                 });
+
                 exec(`git rev-parse ${remote}/${branch}`, (commitErr, commitID) => {
                     if(commitErr) return reject(`Something went wrong while fetching latest commit ID. ${stderr}`);
                     latestCommitID = commitID;
                 });
+
                 response = {
                     same: currentCommitID === latestCommitID,
                     current: currentCommitID,
@@ -35,6 +40,7 @@ module.exports.check = () => new Promise(async (resolve, reject) => {
         } else {
             const resp = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
             if(!resp || !resp.data) throw new Error("Could fetch the GitHub repo.");
+            
             response = {
                 same: pkg.version === resp.data.version,
                 current: pkg.version,
