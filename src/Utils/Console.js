@@ -11,7 +11,7 @@ module.exports  = () => {
     require("moment-timezone");
 
     const date = moment().tz('Asia/Kolkata').format(`YYYY-MM-DD`);
-    const time = moment().tz('Asia/Kolkata').format(`HH:mm:ss zz`);
+    const time = moment().tz('Asia/Kolkata').format(`HH:mm:ss`);
 
     /* Normal */
     const normalPath = path.resolve(`src`, `logs`) + `/${date}-normal.log`;
@@ -20,7 +20,7 @@ module.exports  = () => {
 
     const consoleLog = console.log;
     console.log = function(log) {
-        consoleLog(`${chalk.gray(`${date} ${time}`)} [${chalk.blueBright("LOG")}] ${log}`);
+        consoleLog(`[${chalk.blueBright("INFO")}] ${chalk.gray(`${time}`)} ${log}`);
         normalFile.write(`[${time}] ${log}\n`);
     }
 
@@ -31,7 +31,7 @@ module.exports  = () => {
 
     const consoleWarn = console.warn;
     console.warn = function(log) {
-        consoleWarn(`${chalk.gray(`${date} ${time}`)} [${chalk.yellowBright("WARN")}] ${log}`);
+        consoleWarn(`[${chalk.yellowBright("WARN")}] ${chalk.gray(`${time}`)} ${log}`);
         warnFile.write(`[${time}] ${log}\n`);
     }
 
@@ -42,7 +42,7 @@ module.exports  = () => {
 
     const consoleError = console.error;
     console.error = function(log) {
-        consoleError(`${chalk.gray(`${date} ${time}`)} [${chalk.redBright("ERR")}] ${log}`);
+        consoleError(`[${chalk.redBright("ERR")}] ${chalk.gray(`${time}`)} ${log}`);
         errorFile.write(`[${time}] ${log}\n`);
     }
 }
