@@ -13,9 +13,36 @@ const branch = settings.branch && availableBranches.includes(settings.branch.toL
 
 module.exports.check = () => new Promise(async (resolve, reject) => {
     try {
-        const response = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
-        if(!response.data) throw new Error("Could fetch the GitHub repo.");
-        resolve({ same: pkg.version === response.data.version, latest: response.data.version });
+        let response;
+        if(settings.update && settings.update.includeFixes) {
+            exec(`git diff ${remote}/${branch} ${branch}`, (stderr,) => {
+                if(stderr) return reject(`Something went wrong. ${stderr}`);
+                let currentCommitID, latestCommitID;
+                exec(`git rev-parse ${branch}`, (commitErr, commitID) => {
+                    if(commitErr) return reject(`Something went wrong while fetching current commit ID. ${stderr}`);
+                    currentCommitID = commitID;
+                });
+                exec(`git rev-parse ${remote}/${branch}`, (commitErr, commitID) => {
+                    if(commitErr) return reject(`Something went wrong while fetching latest commit ID. ${stderr}`);
+                    latestCommitID = commitID;
+                });
+                response = {
+                    same: currentCommitID === latestCommitID,
+                    current: currentCommitID,
+                    latest: latestCommitID
+                };
+            });
+        } else {
+            const resp = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
+            if(!resp || !resp.data) throw new Error("Could fetch the GitHub repo.");
+            response = {
+                same: pkg.version === resp.data.version,
+                current: pkg.version,
+                latest: resp.data.version
+            };
+        }
+
+        resolve(response);
     } catch (error) {
         reject(`Couldn\'t check versions. (${error})`);
     }
