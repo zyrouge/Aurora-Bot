@@ -3,3 +3,5 @@ package-lock.json
 src/logs
 .env
 storage
+shrinkwrap.yaml
+options.yaml

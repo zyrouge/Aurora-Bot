@@ -6,7 +6,7 @@
 /* Prerequisites */
 global.startTime = Date.now();
 require('dotenv').config();
-require('./Utils/Starter-Logs')();
+require('./Utils/Starter')();
 
 /* Aurora */
 const Aurora = require(`./base/Client`);
