@@ -10,6 +10,9 @@ module.exports  = () => {
     var moment = require("moment");
     require("moment-timezone");
 
+    /* Check if folder exists */
+    if(!fs.existsSync(__dirname + "/../logs")) fs.mkdirSync(__dirname + "/../logs");
+
     const date = moment().tz('Asia/Kolkata').format(`YYYY-MM-DD`);
     const time = moment().tz('Asia/Kolkata').format(`HH:mm:ss`);
 
