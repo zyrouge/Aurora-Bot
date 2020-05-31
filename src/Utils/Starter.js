@@ -22,7 +22,7 @@ module.exports.update = () => new Promise(async (resolve) => {
     try {
         process.stdout.write(`[${chalk.redBright("BOOT")}] Checking for latest version...\n`);
 
-        if(settings.update.autoupdate) {
+        if(settings.autoupdate) {
             const UPDATER = require(path.resolve("src", "Utils", "Autoupdater"));
             const info = await UPDATER.check();
             if(info.same) {
