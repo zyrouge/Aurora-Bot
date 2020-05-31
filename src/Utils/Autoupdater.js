@@ -25,7 +25,7 @@ module.exports.check = () => new Promise(async (resolve, reject) => {
             /* Commits */
             const currentCommit = exec(`git rev-parse ${branch}`);
             const latestCommit = exec(`git rev-parse ${remote}/${branch}`);
-
+console.log(currentCommit, latestCommit)
             resolve({
                 same: currentCommit === latestCommit,
                 current: currentCommit,
