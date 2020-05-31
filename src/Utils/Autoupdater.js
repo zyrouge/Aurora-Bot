@@ -40,13 +40,13 @@ module.exports.check = () => new Promise(async (resolve, reject) => {
                 latest: latestCommit.stdout
             });
         } else {
-            const resp = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
-            if(!resp || !resp.data) throw new Error("Could fetch the GitHub repo.");
+            const response = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
+            if(!response || !response.data) throw new Error("Could fetch the GitHub repo.");
             
             resolve({
-                same: pkg.version === resp.data.version,
+                same: pkg.version === response.data.version,
                 current: pkg.version,
-                latest: resp.data.version
+                latest: response.data.version
             });
         }
 
