@@ -14,7 +14,7 @@ const exec = require('child_process').execSync;
 
 const remote = settings.remote || "origin";
 const availableBranches = ["master", "dev"];
-const branch = settings.branch && availableBranches.includes(settings.branch.toLowerCase) ? settings.branch : "master";
+const branch = settings.branch && availableBranches.includes(settings.branch) ? settings.branch : "master";
 
 module.exports.check = () => new Promise(async (resolve, reject) => {
     try {
