@@ -10,9 +10,7 @@ const path = require("path");
 const yaml = require("yaml");
 const settingsFile = fs.readFileSync(path.resolve("options.yaml"), 'utf8');
 const settings = yaml.parse(settingsFile);
-const util = require('util');
-const Exec = require('child_process').exec;
-const exec = util.promisify(Exec);
+const exec = require('child_process').execSync;
 
 const remote = settings.remote || "origin";
 const availableBranches = ["master", "dev"];
@@ -20,23 +18,18 @@ const branch = settings.branch && availableBranches.includes(settings.branch.toL
 
 module.exports.check = () => new Promise(async (resolve, reject) => {
     try {
-        let response;
         if(settings.update && settings.update.includeFixes) {
             await this.fetch(); /* Fetches branch to determine commit IDs */
             await this.reset(); /* Cleans the changes */
 
-            /* Current Commit */
-            const currentCommit = await exec(`git rev-parse ${branch}`);
-            if(currentCommit.stderr) return reject(`Something went wrong while fetching current commit ID. ${currentCommit.stderr}`);
-
-            /* Latest Commit */
-            const latestCommit = await exec(`git rev-parse ${remote}/${branch}`);
-            if(latestCommit.stderr) return reject(`Something went wrong while fetching current commit ID. ${latestCommit.stderr}`);
+            /* Commits */
+            const currentCommit = exec(`git rev-parse ${branch}`);
+            const latestCommit = exec(`git rev-parse ${remote}/${branch}`);
 
             resolve({
-                same: currentCommit.stdout === latestCommit.stdout,
-                current: currentCommit.stdout,
-                latest: latestCommit.stdout
+                same: currentCommit === latestCommit,
+                current: currentCommit,
+                latest: latestCommit
             });
         } else {
             const response = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
@@ -65,22 +58,29 @@ module.exports.update = () => new Promise(async (resolve, reject) => {
     }
 });
 
-module.exports.fetch = () => new Promise(async (resolve, reject) => {
-    Exec(`git fetch ${remote} ${branch}`, (stderr) => {
-        if(stderr) return reject(`Something went wrong. ${stderr}`);
+module.exports.fetch = () => new Promise((resolve, reject) => {
+    try {
+        exec(`git fetch ${remote} ${branch}`);
         resolve(true);
-    });
+    } catch(error) {
+        reject(`Something went wrong. ${stderr}`);
+    }
 });
 
 module.exports.reset = () => new Promise(async (resolve, reject) => {
-    const { stderr } = await exec(`git reset --hard ${remote}/${branch}`);
-    if(stderr) return reject(`Something went wrong. ${stderr}`);
-    resolve(true);
+    try {
+        exec(`git reset --hard ${remote}/${branch}`);
+        resolve(true);
+    } catch(error) {
+        reject(`Something went wrong. ${stderr}`);
+    }
 });
 
 module.exports.pull = () => new Promise(async (resolve, reject) => {
-    let command = `git pull --force ${remote} ${branch}`;
-    const { stderr } = await exec(command);
-    if(stderr) return reject(`Something went wrong. ${stderr}`);
-    resolve(true);
+    try {
+        exec(`git pull --force ${remote} ${branch}`);
+        resolve(true);
+    } catch(error) {
+        reject(`Something went wrong. ${stderr}`);
+    }
 });
