@@ -11,7 +11,6 @@ const yaml = require("yaml");
 const settingsFile = fs.readFileSync(path.resolve("options.yaml"), 'utf8');
 const settings = yaml.parse(settingsFile);
 const util = require('util');
-const { stderr } = require("process");
 const Exec = require('child_process').exec;
 const exec = util.promisify(Exec);
 
@@ -80,8 +79,7 @@ module.exports.reset = () => new Promise(async (resolve, reject) => {
 });
 
 module.exports.pull = () => new Promise(async (resolve, reject) => {
-    let command = `git pull ${remote} ${branch}`;
-    if(settings.update.forceUpdate) command += " --force";
+    let command = `git pull --force ${remote} ${branch}`;
     const { stderr } = await exec(command);
     if(stderr) return reject(`Something went wrong. ${stderr}`);
     resolve(true);
