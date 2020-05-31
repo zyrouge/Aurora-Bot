@@ -25,7 +25,7 @@ module.exports.check = () => new Promise(async (resolve, reject) => {
             /* Commits */
             const currentCommit = exec(`git rev-parse ${branch}`);
             const latestCommit = exec(`git rev-parse ${remote}/${branch}`);
-console.log(currentCommit, latestCommit)
+            console.log(currentCommit, latestCommit);
             resolve({
                 same: currentCommit === latestCommit,
                 current: currentCommit,
@@ -34,7 +34,7 @@ console.log(currentCommit, latestCommit)
         } else {
             const response = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
             if(!response || !response.data) throw new Error("Could fetch the GitHub repo.");
-            
+            console.log(response.data)
             resolve({
                 same: pkg.version === response.data.version,
                 current: pkg.version,
@@ -60,8 +60,9 @@ module.exports.update = () => new Promise(async (resolve, reject) => {
 
 module.exports.fetch = () => new Promise((resolve, reject) => {
     try {
-        exec(`git fetch ${remote} ${branch}`);
-        resolve(true);
+        const result = exec(`git fetch ${remote} ${branch}`);
+        console.log(result);
+        resolve(result);
     } catch(error) {
         reject(`Something went wrong. ${stderr}`);
     }
@@ -69,8 +70,9 @@ module.exports.fetch = () => new Promise((resolve, reject) => {
 
 module.exports.reset = () => new Promise(async (resolve, reject) => {
     try {
-        exec(`git reset --hard ${remote}/${branch}`);
-        resolve(true);
+        const result = exec(`git reset --hard ${remote}/${branch}`);
+        console.log(result);
+        resolve(result);
     } catch(error) {
         reject(`Something went wrong. ${stderr}`);
     }
@@ -78,8 +80,9 @@ module.exports.reset = () => new Promise(async (resolve, reject) => {
 
 module.exports.pull = () => new Promise(async (resolve, reject) => {
     try {
-        exec(`git pull --force ${remote} ${branch}`);
-        resolve(true);
+        const result = exec(`git pull --force ${remote} ${branch}`);
+        console.log(result);
+        resolve(result);
     } catch(error) {
         reject(`Something went wrong. ${stderr}`);
     }
