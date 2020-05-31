@@ -28,10 +28,10 @@ module.exports.update = () => new Promise(async (resolve) => {
             if(info.same) {
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Bot up-to date\n`);
             } else {
-                process.stdout.write(`[${chalk.redBright("BOOT")}] Updating bot to ${chalk.bgRedBright(`v${info.latest}`)}\n`);
+                process.stdout.write(`[${chalk.redBright("BOOT")}] New version found! Updating to ${chalk.redBright(`v${info.latest}`)}\n`);
                 await UPDATER.update();
-                process.stdout.write(`[${chalk.redBright("BOOT")}] Updated bot to ${chalk.bgRedBright(`v${info.latest}`)}\n`);
-                process.stdout.write(`[${chalk.redBright("BOOT")}] Exiting... (Manually restart it if needed)\n`);
+                process.stdout.write(`[${chalk.redBright("BOOT")}] ${chalk.redBright(`v${info.current}`)} -> ${chalk.greenBright(`v${info.latest}`)}\n`);
+                process.stdout.write(`[${chalk.redBright("BOOT")}] Updated successfully! Exiting...\n`);
                 process.exit();
             }
         } else process.stdout.write(`[${chalk.redBright("BOOT")}] Skipped Updating\n`);
