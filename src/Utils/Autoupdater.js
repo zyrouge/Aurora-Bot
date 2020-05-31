@@ -18,30 +18,14 @@ const branch = settings.branch && availableBranches.includes(settings.branch.toL
 
 module.exports.check = () => new Promise(async (resolve, reject) => {
     try {
-        if(settings.update && settings.update.includeFixes) {
-            await this.fetch(); /* Fetches branch to determine commit IDs */
-            await this.reset(); /* Cleans the changes */
+        const response = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
+        if(!response || !response.data) throw new Error("Could fetch the GitHub repo.");
 
-            /* Commits */
-            const currentCommit = exec(`git rev-parse ${branch}`);
-            const latestCommit = exec(`git rev-parse ${remote}/${branch}`);
-            // console.log(currentCommit, latestCommit);
-            resolve({
-                same: currentCommit === latestCommit,
-                current: currentCommit,
-                latest: latestCommit
-            });
-        } else {
-            const response = await axios.get(`https://raw.githubusercontent.com/zyrouge/aurora-bot/${branch}/package.json`);
-            if(!response || !response.data) throw new Error("Could fetch the GitHub repo.");
-            // console.log(response.data)
-            resolve({
-                same: pkg.version === response.data.version,
-                current: pkg.version,
-                latest: response.data.version
-            });
-        }
-
+        resolve({
+            same: pkg.version === response.data.version,
+            current: pkg.version,
+            latest: response.data.version
+        });
     } catch (error) {
         reject(`Couldn\'t check versions. (${error})`);
     }
@@ -61,7 +45,6 @@ module.exports.update = () => new Promise(async (resolve, reject) => {
 module.exports.fetch = () => new Promise((resolve, reject) => {
     try {
         const result = exec(`git fetch ${remote} ${branch}`);
-        // console.log(result);
         resolve(result);
     } catch(error) {
         reject(`Something went wrong. ${stderr}`);
@@ -71,7 +54,6 @@ module.exports.fetch = () => new Promise((resolve, reject) => {
 module.exports.reset = () => new Promise(async (resolve, reject) => {
     try {
         const result = exec(`git reset --hard ${remote}/${branch}`);
-        // console.log(result);
         resolve(result);
     } catch(error) {
         reject(`Something went wrong. ${stderr}`);
@@ -81,7 +63,6 @@ module.exports.reset = () => new Promise(async (resolve, reject) => {
 module.exports.pull = () => new Promise(async (resolve, reject) => {
     try {
         const result = exec(`git pull --force ${remote} ${branch}`);
-        // console.log(result);
         resolve(result);
     } catch(error) {
         reject(`Something went wrong. ${stderr}`);
