@@ -50,11 +50,10 @@ class Aurora extends Client {
         return false;
     }
 
-    async api() {
-        return new Promise((resolve, reject) => {
+    async web() {
+        return new Promise(async (resolve, reject) => {
             try {
-                const API = require(`../api/index`);
-                API.start(this);
+                await require(`../web/index`)({ client: this });
                 resolve(this.config.port);
             } catch (e) {
                 reject(e);

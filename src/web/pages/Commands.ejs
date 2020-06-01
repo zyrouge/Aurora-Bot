@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("../components/head.ejs", { title: "Commands" }) %>
+    <link rel="stylesheet" href="static/Commands.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include("../components/NavBar.ejs") %>
+
+    <!-- Content -->
+    <main>
+        <div class="container">
+            <div class="topic">
+                <h1>Commands</h1>
+            </div>
+            <div class="search">
+                <input type="text" id="search" onkeyup="filterCommands()" placeholder="🔍 Search in <%= aurora.commands.size %> commands...">
+            </div>
+            <div class="noResults">
+                <br>
+                <img src="https://img.icons8.com/cute-clipart/512/000000/search.png">
+                <h1>No results were found.</h1>
+            </div>
+            <div class="commands">
+                <% aurora.commands.filter(cmd => cmd.conf.category.toLowerCase() !== "owner").forEach(({ conf: { name, aliases, description, cooldown, permission: { bot, user }, usage, category, createdAt }, commands }) => { %>
+                    <div class="command-box" id="command-box">
+                        <div class="title">
+                            <h3>
+                                <%= name %>
+                                <% if (Date.now() - new Date(createdAt).getTime() < 86400000 * 3) { %>
+                                    <span class="new"><i class="fas fa-magic"></i> NEW</span>
+                                <% } %>
+                            </h3>
+                            <p class="cat">
+                                <%= category %>
+                                <i class="fas fa-chevron-down"></i>
+                            </p>
+                        </div>
+                        <p class="description"><%= description %></p>
+                        <div class="info">
+                            <hr>
+                            <% if (aliases.length) { %>
+                                <p><b>Aliases: </b><code><%= aliases.join(", ") %></code></p>
+                            <% } %>
+                            <p><b>Cooldown: </b><%= cooldown %> Seconds</p>
+                            <p><b>Usage: </b><code>a&<%= name %><%= usage ? ` ${usage}` : "" %></code></p>
+                            <% if (bot.length) { %>
+                                <p><b>Bot Permissions: </b><code><%= bot.join(", ") %></code></p>
+                            <% } %>
+                            <% if (user.length) { %>
+                                <p><b>User Permissions: </b><code><%= user.join(", ") %></code></p>
+                            <% } %>
+                            <% if (commands.size) { %>
+                                <% commands.map(x => x).forEach(sub => { %>
+                                    <div class="subcommand info">
+                                    <h4><%= sub.conf.name %></h4>
+                                    <p><%= sub.conf.description %></p>
+                                    <% if (sub.conf.aliases.length) { %>
+                                        <p><b>Aliases: </b><code><%= sub.conf.aliases.join(", ") %></code></p>
+                                    <% } %>
+                                    <p><b>Usage: </b><code>a&<%= name %> <%= sub.conf.name %><%= sub.conf.usage ? ` ${sub.conf.usage}` : "" %></code></p>
+                                    </div>
+                                <% }); %>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include("../components/Footer.ejs") %>
+</body>
+
+<script>
+$(".command-box").click(function () {
+    const command_box = $(this).find('.info');
+    if(command_box.hasClass("show")) {
+        command_box.removeClass("show");
+        $(this).find('.cat i').css("transform", "rotate(0deg)");
+    }
+    else {
+        command_box.addClass("show");
+        $(this).find('.cat i').css("transform", "rotate(180deg)");
+    }
+});
+
+function filterCommands() {
+    var searchInput = $('#search').get(0),
+    search = searchInput.value.toLowerCase(),
+    commands = $(".commands").get(0).children,
+    commandsArray = Array.from(commands),
+    filtered = commandsArray.length;
+
+    for (i = 0; i < commandsArray.length; i++) {
+        const current = commandsArray[i];
+        if(String(current.innerHTML).trim().toLowerCase().indexOf(search) > -1) {
+            current.style.display = "block";
+        } else {
+            current.style.display = "none";
+            filtered -= 1;
+        }
+    }
+
+    if(filtered) {
+        $(".noResults").css("display", "none");
+    } else {
+        $(".noResults").css("display", "flex");
+    }
+}
+</script>
+</html>

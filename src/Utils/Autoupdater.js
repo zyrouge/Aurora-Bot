@@ -8,7 +8,7 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const yaml = require("yaml");
-const settingsFile = fs.readFileSync(path.resolve("options.yaml"), 'utf8');
+const settingsFile = fs.readFileSync(path.resolve("settings.yaml"), 'utf8');
 const settings = yaml.parse(settingsFile);
 const exec = require('child_process').execSync;
 

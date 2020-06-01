@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const pkg = require(path.resolve("package.json"));
 const yaml = require("yaml");
-const settingsFile = fs.readFileSync(path.resolve("options.yaml"), 'utf8');
+const settingsFile = fs.readFileSync(path.resolve("settings.yaml"), 'utf8');
 const settings = yaml.parse(settingsFile);
 
 module.exports = () => {
@@ -34,7 +34,7 @@ module.exports.update = () => new Promise(async (resolve) => {
                 process.stdout.write(`[${chalk.redBright("BOOT")}] Updated successfully! Exiting...\n`);
                 process.exit();
             }
-        } else process.stdout.write(`[${chalk.redBright("BOOT")}] Skipped Updating\n`);
+        } else process.stdout.write(`[${chalk.redBright("BOOT")}] Skipped Updating (Auto-Update is disabled)\n`);
 
         process.stdout.write(`[${chalk.redBright("BOOT")}] Starting bot...\n`);
         resolve();

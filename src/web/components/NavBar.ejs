@@ -1,0 +1,159 @@
+<nav class="navbar">
+    <a href="/">
+        <img src="https://github.com/zyrouge/aurora-cdn/blob/master/trans.png?raw=true" height="30px">
+    </a>
+    <div class="burger">
+        <span class="__burger__line__"></span>
+        <span class="__burger__line__"></span>
+        <span class="__burger__line__"></span>
+    </div>
+    <div class="links">
+        <ul>
+            <li>
+                <a href="/commands">Commands</a>
+            </li>
+            <li>
+                <a href="/invite">Invite</a>
+            </li>
+            <li>
+                <a href="/status">Status</a>
+            </li>
+            <li>
+                <a href="https://discord.gg/9YqKJJd">Support</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+const navbar = () => {
+    $(".burger").click(() => {
+        if ($(".links").hasClass("__navbar__active__")) {
+            $(".burger").removeClass("__navbar__active__");
+            $(".links").removeClass("__navbar__active__");
+        } else {
+            $(".burger").addClass("__navbar__active__");
+            $(".links").addClass("__navbar__active__");
+        }
+    });
+}
+
+navbar();
+</script>
+
+<style scoped>
+nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    top: 0;
+    height: 60px;
+    position: fixed;
+    width: 100%;
+    overflow: hidden;
+    background-color: #0f1014;
+    z-index: 1;
+}
+
+ul {
+    display: flex;
+    flex-direction: row;
+}
+
+li {
+    list-style: none;
+}
+
+li a {
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #f1f1f2;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.5s;
+}
+
+li a:hover {
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.burger {
+    display: none;
+    cursor: pointer;
+}
+
+.burger .__burger__line__ {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4.4px 0;
+    transition: 0.4s;
+}
+
+@media screen and (max-width: 750px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    .burger {
+        display: block;
+    }
+
+    .links {
+        position: fixed;
+        transform: translateX(100vw);
+        height: calc(100vh - 60px);
+        top: 60px;
+        right: 0;
+        bottom: 0;
+        background-color: #0f1014;
+        z-index: 10;
+        transition: 0.5s ease-in-out;
+    }
+
+    li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    li a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .links ul {
+        height: 100%;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        width: 300px;
+    }
+
+    .links.__navbar__active__ {
+        transform: translateX(0vw);
+    }
+
+    .burger.__navbar__active__ .__burger__line__:nth-child(1) {
+        transform: rotate(45deg) translateY(10px);
+    }
+
+    .burger.__navbar__active__ .__burger__line__:nth-child(3) {
+        transform: rotate(-45deg) translateY(-10px);
+    }
+
+    .burger.__navbar__active__ .__burger__line__:nth-child(2) {
+        opacity: 0;
+    }
+}
+</style>
