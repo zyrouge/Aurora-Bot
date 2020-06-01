@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("../components/head.ejs", { title: "Status" }) %>
+    <link rel="stylesheet" href="static/Status.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include("../components/NavBar.ejs") %>
+
+    <!-- Content -->
+    <main>
+        <div class="container">
+            <div class="topic">
+                <h1>Status</h1>
+            </div>
+            <% if (chart) { %>
+                <div class="chart">
+                    <div class="title">
+                        <h3>Response Time</h3>
+                        <span class="bot__title <%= chart.status %>"></span>
+                    </div>
+                    <canvas id="__chart__"></canvas>
+                </div>
+            <% } %>
+            <% if (incidents.length) { %>
+                <div class="incidents-box">
+                    <h2>Incidents</h2>
+                    <div class="incidents">
+                        <% incidents.forEach(incident => { %>
+                            <div class="incident">
+                                <div class="author">
+                                    <div class="__author__">
+                                        <img src="<%= incident.author.avatar %>">
+                                        <p class="username">
+                                            <%= incident.author.name %><p class="discrim">#<%= incident.author.discrim %></p>
+                                        </p>
+                                    </div>
+                                    <p class="time">
+                                        <%= incident.time %>
+                                    </p>
+                                </div>
+                                <hr>
+                                <div class="text">
+                                    <%- incident.content %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <%- include("../components/Footer.ejs") %>
+</body>
+
+<script>
+    const stringy = `<%- JSON.stringify(chart) %>`;
+    if(!stringy) return;
+    const chartData = JSON.parse(stringy);
+    const chartCanva = $("#__chart__")[0].getContext('2d');
+    new Chart(chartCanva, {
+        type: "line",
+        data: {
+            labels: chartData.label,
+            datasets: [
+                {
+                    label: "Ping (in ms)",
+                    data: chartData.data,
+                    backgroundColor: 'rgba(162, 57, 202, 0.2)',
+                    borderColor: 'rgba(162, 57, 202, 1)',
+                    borderWidth: 1
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [
+                    {
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }
+                ]
+            }
+        },
+    });
+</script>
+</html>

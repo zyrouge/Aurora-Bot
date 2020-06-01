@@ -31,7 +31,7 @@ const init = async () => {
     const path = require('path');
 
     /* Redefine Console + Prototypes*/
-    require("./Utils/Console")();
+    if(process.env.NODE_ENV === "production") require("./Utils/Console")();
     require("./Utils/Prototypes")();
 
     /* Commands */
@@ -78,8 +78,6 @@ const init = async () => {
         console.log(`Loaded ${chalk.blueBright(`${files.length}`)} Event(s)`);
     });
 
-    /* API */
-    await client.api().then((port) => console.log(`Started ${chalk.greenBright(`API`)} (Port ${port})`));
     /* Database */
     await client.database.Guild.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Guild`)} (Database)`));
     await client.database.Member.sync({force:true}).then(() => console.log(`Loaded ${chalk.greenBright(`Member`)} (Database)`));
@@ -100,15 +98,18 @@ const init = async () => {
         process.stdout.write(`[${chalk.redBright("BOOT")}] Exiting...`);
         process.exit(0);
     });
+
+    /* API */
+    await client.web().then((port) => process.stdout.write(`[${chalk.redBright("BOOT")}] Website listening on PORT ${port}!\n`));
 };
 
 init();
 
-process.on("unhandledRejection", (error) => {
-    const chalk = require('chalk');
-    console.log(chalk.redBright(`[ ERROR (START) ]`));
-    console.log(error);
-    console.log(chalk.gray(`Event: unhandledRejection`));
-    console.log(chalk.gray(`Logged on: ${require("./Utils/getTime")()}`));
-    console.log(chalk.redBright(`[ ERROR (END) ]`));
-});
+if(process.env.NODE_ENV === "production") {
+    process.on("unhandledRejection", (error) => {
+        const chalk = require('chalk');
+        console.error(chalk.redBright(`[ ERROR (START) ]`));
+        console.error(error);
+        console.error(chalk.redBright(`[ ERROR (END) ]`));
+    });
+}

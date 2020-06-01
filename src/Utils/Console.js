@@ -45,7 +45,7 @@ module.exports  = () => {
 
     const consoleError = console.error;
     console.error = function(log) {
-        consoleError(`[${chalk.redBright("ERR")}] ${chalk.gray(`${time}`)} ${log}`);
+        consoleError(`[${chalk.redBright("ERRO")}] ${chalk.gray(`${time}`)} ${log}`);
         errorFile.write(`[${time}] ${log}\n`);
     }
 }

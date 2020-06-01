@@ -4,4 +4,4 @@ src/logs
 .env
 storage
 shrinkwrap.yaml
-options.yaml
+settings.yaml

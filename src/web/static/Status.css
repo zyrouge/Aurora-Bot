@@ -1,0 +1,104 @@
+.chart {
+    padding: 10px 10px 40px 10px;
+    background-color: rgba(162, 57, 202, 0.05);
+    height: 350px;
+    margin: 5%;
+}
+
+.title {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.__up__::after {
+    content: "Online";
+    font-weight: bold;
+    color: rgb(0, 255, 0);
+}
+
+.__disrupted__::after {
+    content: "Disrupted";
+    font-weight: bold;
+    color: rgb(255, 255, 0);
+}
+
+.__down__::after {
+    content: "Down";
+    font-weight: bold;
+    color: rgb(255, 0, 0);
+}
+
+.incidents-box {
+    text-align: center;
+    margin: 5%;
+}
+
+.incidents {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.incidents .incident {
+    margin: 10px 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: rgba(162, 57, 202, 0.05);
+}
+
+.incidents .incident .author {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.incidents .incident .author .__author__ {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+}
+
+.incidents .incident .author .__author__ .username {
+    font-weight: bold;
+}
+
+.incidents .incident .author .time {
+    opacity: 0.5;
+    font-size: 15px;
+}
+
+.incidents .incident img {
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid white;
+}
+
+.incidents .incident .text {
+    width: 100%;
+    text-align: left;
+}
+
+hr {
+    width: 100%;
+    background-color: white;
+    padding: 0.5px;
+    opacity: 0.1;
+    margin: 15px 0;
+}
+
+.discrim {
+    opacity: 0.5;
+}
