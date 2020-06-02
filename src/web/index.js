@@ -20,12 +20,6 @@ const web = async ({
 
     server.use(helmet());
     server.disable('x-powered-by');
-    server.use((req, res, next) => {
-        if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== "development") {
-            return res.redirect('https://' + req.get('host') + req.url);
-        }
-        next();
-      })
 
     server.use(bodyParser.json());
     server.set('view engine', 'ejs');
