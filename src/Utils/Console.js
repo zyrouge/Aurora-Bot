@@ -23,8 +23,10 @@ module.exports  = () => {
 
     const consoleLog = console.log;
     console.log = function(...logs) {
-        consoleLog(`[${chalk.blueBright("INFO")}] ${chalk.gray(`${time}`)} ${log}`);
-        logs.forEach(log => normalFile.write(`[${time}] ${log}\n`));
+        logs.forEach(log => {
+            consoleLog(`[${chalk.blueBright("INFO")}] ${chalk.gray(`${time}`)} ${log}`);
+            normalFile.write(`[${time}] ${log}\n`)
+        });
     }
 
     /* Warn */
@@ -34,8 +36,10 @@ module.exports  = () => {
 
     const consoleWarn = console.warn;
     console.warn = function(...logs) {
-        consoleWarn(`[${chalk.yellowBright("WARN")}] ${chalk.gray(`${time}`)} ${log}`);
-        logs.forEach(log => warnFile.write(`[${time}] ${log}\n`));
+        logs.forEach(log => {
+            consoleWarn(`[${chalk.yellowBright("WARN")}] ${chalk.gray(`${time}`)} ${log}`);
+            warnFile.write(`[${time}] ${log}\n`);
+        });
     }
 
     /* Error */
@@ -45,7 +49,9 @@ module.exports  = () => {
 
     const consoleError = console.error;
     console.error = function(...logs) {
-        consoleError(`[${chalk.redBright("ERRO")}] ${chalk.gray(`${time}`)} ${log}`);
-        logs.forEach(log => errorFile.write(`[${time}] ${log}\n`));
+        logs.forEach(log => {
+            consoleError(`[${chalk.redBright("ERRO")}] ${chalk.gray(`${time}`)} ${log}`);
+            errorFile.write(`[${time}] ${log}\n`);
+        });
     }
 }
