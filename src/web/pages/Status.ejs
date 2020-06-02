@@ -61,36 +61,37 @@
 
 <script>
     const stringy = `<%- JSON.stringify(chart) %>`;
-    if(!stringy) return;
-    const chartData = JSON.parse(stringy);
-    const chartCanva = $("#__chart__")[0].getContext('2d');
-    new Chart(chartCanva, {
-        type: "line",
-        data: {
-            labels: chartData.label,
-            datasets: [
-                {
-                    label: "Ping (in ms)",
-                    data: chartData.data,
-                    backgroundColor: 'rgba(162, 57, 202, 0.2)',
-                    borderColor: 'rgba(162, 57, 202, 1)',
-                    borderWidth: 1
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                yAxes: [
+    if(stringy) {
+        const chartData = JSON.parse(stringy);
+        const chartCanva = $("#__chart__")[0].getContext('2d');
+        new Chart(chartCanva, {
+            type: "line",
+            data: {
+                labels: chartData.label,
+                datasets: [
                     {
-                        ticks: {
-                            beginAtZero: false
+                        label: "Ping (in ms)",
+                        data: chartData.data,
+                        backgroundColor: 'rgba(162, 57, 202, 0.2)',
+                        borderColor: 'rgba(162, 57, 202, 1)',
+                        borderWidth: 1
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: false
+                            }
                         }
-                    }
-                ]
-            }
-        },
-    });
+                    ]
+                }
+            },
+        });
+    }
 </script>
 </html>
