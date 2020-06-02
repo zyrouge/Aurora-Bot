@@ -22,9 +22,9 @@ module.exports  = () => {
     const normalFile = fs.createWriteStream(normalPath, { flags: 'a' });
 
     const consoleLog = console.log;
-    console.log = function(log) {
+    console.log = function(...logs) {
         consoleLog(`[${chalk.blueBright("INFO")}] ${chalk.gray(`${time}`)} ${log}`);
-        normalFile.write(`[${time}] ${log}\n`);
+        logs.forEach(log => normalFile.write(`[${time}] ${log}\n`));
     }
 
     /* Warn */
@@ -33,9 +33,9 @@ module.exports  = () => {
     const warnFile = fs.createWriteStream(warnPath, { flags: 'a' });
 
     const consoleWarn = console.warn;
-    console.warn = function(log) {
+    console.warn = function(...logs) {
         consoleWarn(`[${chalk.yellowBright("WARN")}] ${chalk.gray(`${time}`)} ${log}`);
-        warnFile.write(`[${time}] ${log}\n`);
+        logs.forEach(log => warnFile.write(`[${time}] ${log}\n`));
     }
 
     /* Error */
@@ -44,8 +44,8 @@ module.exports  = () => {
     const errorFile = fs.createWriteStream(errorPath, { flags: 'a' });
 
     const consoleError = console.error;
-    console.error = function(log) {
+    console.error = function(...logs) {
         consoleError(`[${chalk.redBright("ERRO")}] ${chalk.gray(`${time}`)} ${log}`);
-        errorFile.write(`[${time}] ${log}\n`);
+        logs.forEach(log => errorFile.write(`[${time}] ${log}\n`));
     }
 }
