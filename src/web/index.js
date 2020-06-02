@@ -21,7 +21,11 @@ const web = async ({
     server.set('view engine', 'ejs');
     server.set('views', path.join(__dirname, "pages"));
 
+    const MemoryStore = require('memorystore')(session);
     server.use(session({
+        store: new MemoryStore({
+            checkPeriod: 86400000
+        }),
         secret: 'AuroraDiscordBot',
         resave: false,
         saveUninitialized: false
@@ -32,8 +36,8 @@ const web = async ({
         next();
     });
 
-    bindPassport(server);
-    bindAuth(server);
+    await bindPassport(server);
+    await bindAuth(server);
 
     server.use('/static', express.static(path.join(__dirname, "static")));
     server.use('/', require("./routes/Main"));
@@ -59,7 +63,7 @@ function checkAuth(req, res, next) {
 
 module.exports.checkAuth = checkAuth;
 
-function bindPassport(server) {
+async function bindPassport(server) {
 
     passport.serializeUser(function(user, done) {
         done(null, user);
@@ -83,9 +87,11 @@ function bindPassport(server) {
     server.use(passport.initialize());
     server.use(passport.session());
 
+    Promise.resolve();
+
 }
 
-function bindAuth(server) {
+async function bindAuth(server) {
 
     server.get('/login', (req, res) => {
         res.redirect(config.oauth);
@@ -101,5 +107,7 @@ function bindAuth(server) {
         req.logout();
         res.redirect('/');
     });
+
+    Promise.resolve();
     
 }
