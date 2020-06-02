@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
 const { Strategy } = require("passport-discord").Strategy;
+const helmet = require('helmet');
 const path = require("path");
 const config = require(path.resolve("config"));
 
@@ -16,6 +17,9 @@ const web = async ({
 }) => {
     
     const server  = express();
+
+    server.use(helmet());
+    server.disable('x-powered-by');
 
     server.use(bodyParser.json());
     server.set('view engine', 'ejs');
@@ -38,10 +42,12 @@ const web = async ({
 
     await bindPassport(server);
     await bindAuth(server);
+    await bindHttps(server);
 
     server.use('/static', express.static(path.join(__dirname, "static")));
+    server.get('/ping', checkAuth, (req, res) =>  res.status(200).json({ ok: true }));
     server.use('/', require("./routes/Main"));
-    server.get('/dash', checkAuth, (req, res) =>  res.send('dde'))
+    server.get('/dash', checkAuth, (req, res) =>  res.send('dde'));
 
     /* 404 */
     server.use(function(req, res) {
@@ -62,6 +68,21 @@ function checkAuth(req, res, next) {
 }
 
 module.exports.checkAuth = checkAuth;
+
+async function bindHttps(server) {
+
+    if(process.env.NODE_ENV !== "production") return Promise.resolve();
+
+    server.use((req, res, next) => {
+        if (req.headers["x-forwarded-proto"] === "https"){
+           return next();
+        }
+        res.redirect("https://" + req.headers.host + req.url);  
+    });
+
+    Promise.resolve();
+
+}
 
 async function bindPassport(server) {
 
