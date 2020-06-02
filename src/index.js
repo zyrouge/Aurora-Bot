@@ -31,7 +31,7 @@ const init = async () => {
     const path = require('path');
 
     /* Redefine Console + Prototypes*/
-    if(process.env.NODE_ENV === "production") require("./Utils/Console")();
+    require("./Utils/Console")();
     require("./Utils/Prototypes")();
 
     /* Commands */
