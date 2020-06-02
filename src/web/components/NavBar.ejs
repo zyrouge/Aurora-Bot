@@ -21,6 +21,9 @@
             <li>
                 <a href="https://discord.gg/9YqKJJd">Support</a>
             </li>
+            <li>
+                <a class="special" href="<%= aurora.config.oauth %>">Login</a>
+            </li>
         </ul>
     </div>
 </nav>
@@ -66,17 +69,37 @@ li {
 }
 
 li a {
+    margin: 0 3px;
     padding: 8px 12px;
     font-size: 16px;
     color: #f1f1f2;
     text-decoration: none;
     font-weight: bold;
     transition: 0.5s;
+    border-radius: 3px;
 }
 
 li a:hover {
-    border-radius: 3px;
     background-color: rgba(255, 255, 255, 0.2);
+}
+
+li a.special {
+    position: relative;
+    background: linear-gradient(45deg, #a239ca, #4717f6);
+}
+
+li a.special::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.5s;
+}
+
+li a.special:hover::after {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .burger {
