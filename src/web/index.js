@@ -20,6 +20,12 @@ const web = async ({
 
     server.use(helmet());
     server.disable('x-powered-by');
+    server.use((req, res, next) => {
+        if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== "development") {
+            return res.redirect('https://' + req.get('host') + req.url);
+        }
+        next();
+      })
 
     server.use(bodyParser.json());
     server.set('view engine', 'ejs');
@@ -42,7 +48,6 @@ const web = async ({
 
     await bindPassport(server);
     await bindAuth(server);
-    await bindHttps(server);
 
     server.use('/static', express.static(path.join(__dirname, "static")));
     server.get('/ping', checkAuth, (req, res) =>  res.status(200).json({ ok: true }));
@@ -68,23 +73,6 @@ function checkAuth(req, res, next) {
 }
 
 module.exports.checkAuth = checkAuth;
-
-async function bindHttps(server) {
-
-    if(process.env.NODE_ENV !== "production") return Promise.resolve();
-
-    server.use((req, res, next) => {
-        if(!req.secure) {
-            const secureUrl = `https://${req.headers['host']}${req.url}`; 
-            res.writeHead(301, { "Location":  secureUrl });
-            res.end();
-        }
-        next(); 
-    });
-
-    Promise.resolve();
-
-}
 
 async function bindPassport(server) {
 
