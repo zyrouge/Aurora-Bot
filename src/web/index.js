@@ -74,10 +74,12 @@ async function bindHttps(server) {
     if(process.env.NODE_ENV !== "production") return Promise.resolve();
 
     server.use((req, res, next) => {
-        if (req.headers["x-forwarded-proto"] === "https"){
-           return next();
+        if(!req.secure) {
+            const secureUrl = `https://${req.headers['host']}${req.url}`; 
+            res.writeHead(301, { "Location":  secureUrl });
+            res.end();
         }
-        res.redirect("https://" + req.headers.host + req.url);  
+        next(); 
     });
 
     Promise.resolve();
