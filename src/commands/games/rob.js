@@ -28,6 +28,12 @@ class _Command extends Command {
     async run(message, args) {
         const responder = new this.client.responder(message.channel);
         try {
+            const userGame = this.client.cache.games.get(message.author.id);
+            if(userGame) return responder.send({
+                embed: this.client.embeds.error(message.author, {
+                    description: `${this.client.emojis.cross} You are already in a game. (${userGame})`
+                })
+            });
             const key = { userID: message.author.id };
             let userDB = await this.client.database.User.findOne({ where: key });
             if(!userDB) userDB = await this.client.database.User.create(key);
@@ -49,6 +55,7 @@ class _Command extends Command {
                     description: `${this.client.emojis.cross} You can\'t Rob when your Bounty is above **1000**`
                 })
             });
+            this.client.cache.games.set(message.author.id, this.conf.name);
             const places = [
                 {
                     name: "bank",
@@ -106,14 +113,16 @@ class _Command extends Command {
             let responses = await message.channel.awaitMessages(m => m.author.id == message.author.id, { time: 10000, maxMatches: 1 });
             if(!responses.length) {
                 embed.description = `${this.client.emojis.cross} No Responses was received. The Rob was **Cancelled**!`;
-                return msg.edit({ embed });
+                msg.edit({ embed });
+                return this.client.cache.games.delete(message.author.id);
             }
             if(responses[0]) responses[0].delete().catch(() => {});
             const robPlace = places.find(x => x.name.toLowerCase() == responses[0].content.toLowerCase());
             if(!robPlace) {
                 embed.color = this.client.utils.colors.red;
                 embed.description = `${this.client.emojis.cross} Invalid Response was received. The Rob was **Cancelled**!`;
-                return msg.edit({ embed });
+                msg.edit({ embed });
+                return this.client.cache.games.delete(message.author.id);
             }
             embed.description = `${this.client.emojis.spinner} Finding the nearest **${robPlace.full}** to Rob!`;
             embed.color = this.client.utils.colors.money;
@@ -150,10 +159,10 @@ class _Command extends Command {
                                     safeCash: `${userDB.dataValues.safeCash}`,
                                     cooldowns: userDB.dataValues.cooldowns
                                 }, { where: key })
-                                .then((k) => {
+                                .then(() => {
                                     msg.edit({ embed });
                                 });
-                                return;
+                                return this.client.cache.games.delete(message.author.id);
                             }
                             balance += robbedMoney;
                             bounty += robPlace.bounty;
@@ -176,9 +185,11 @@ class _Command extends Command {
                                     `**Balance:** ${balance} ${this.client.emojis.cash}`,
                                     `**Bounty:** ${bounty}`
                                 ].join("\n");
-                                return msg.edit({ embed });
+                                msg.edit({ embed });
+                                return this.client.cache.games.delete(message.author.id);
                             })
                             .catch(e => {
+                                this.client.cache.games.delete(message.author.id);
                                 responder.send({
                                     embed: this.client.embeds.error(message.author, {
                                         description: `${this.client.emojis.cross} Something went wrong. **${e}**`
@@ -190,6 +201,7 @@ class _Command extends Command {
                 }, 3000);
             }, 2000);
         } catch(e) {
+            this.client.cache.games.delete(message.author.id);
             responder.send({
                 embed: this.client.embeds.error(message.author, {
                     description: `${this.client.emojis.cross} Something went wrong. **${e}**`

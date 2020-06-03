@@ -44,12 +44,12 @@ const web = async ({
     await bindAuth(server);
 
     server.use('/static', express.static(path.join(__dirname, "static")));
-    server.get('/ping', checkAuth, (req, res) =>  res.status(200).json({ ok: true }));
+    server.get('/ping', (req, res) =>  res.status(200).json({ ok: true }));
     server.use('/', require("./routes/Main"));
     server.get('/dash', checkAuth, (req, res) =>  res.send('dde'));
 
     /* 404 */
-    server.use(function(req, res) {
+    server.use((req, res) => {
         res.status(404).send('404: Page not Found');
     });
 
