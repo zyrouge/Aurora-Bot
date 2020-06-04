@@ -24,6 +24,11 @@ class _Command extends Command {
 
     async run(message, args) {
         const responder = new this.client.responder(message.channel);
+        try {
+
+        } catch(e) {
+            
+        }
     }
 }
 
