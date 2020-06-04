@@ -20,30 +20,41 @@ class _Command extends Command {
                 bot: ["embedLinks"],
                 user: []
             },
-            // cooldown: 60,
             enabled: true
         });
     }
 
     async run(message, args) {
         const responder = new this.client.responder(message.channel);
+        let secondUser = message.mentions[0];
         try {
+            const userGame = this.getUserGame(message.author.id);
+            if(userGame) return responder.send({
+                embed: this.client.embeds.error(message.author, {
+                    description: `${this.client.emojis.cross} You are already in a game. (${userGame})`
+                })
+            });
             const key = { userID: message.author.id };
             let userDB = await this.client.database.User.findOne({ where: key });
             if(!userDB) userDB = await this.client.database.User.create(key);
             const cooldown = 45 * 60 * 1000;
             if(userDB.dataValues.cooldowns[this.conf.name] && Date.now() - userDB.dataValues.cooldowns[this.conf.name] < cooldown) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Slowdown **${message.author.id}**! Come back after **${moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]')}** to ${this.conf.name.toCamelCase()} again.`
+                    description: `${this.client.emojis.cross} Slowdown **${message.author.username}**! Come back after **${moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]')}** to ${this.conf.name.toCamelCase()} again.`
                 })
             });
+            this.startUserGame(message.author.id);
             userDB.dataValues.pocketCash = parseInt(userDB.dataValues.pocketCash);
-            let secondUser;
             let otherUserDB;
             let otherKey;
             let timeoutOne = 5000;
-            if(message.mentions[0]) {
-                secondUser = message.mentions[0];
+            if(secondUser) {
+                const secondUserGame = this.getUserGame(secondUser.id);
+                if(secondUserGame) return responder.send({
+                    embed: this.client.embeds.error(message.author, {
+                        description: `${this.client.emojis.cross} **${secondUser.username}** is already in a game. (${secondUserGame})`
+                    })
+                });
                 otherKey = { userID: secondUser.id };
                 otherUserDB = await this.client.database.User.findOne({ where: otherKey });
                 if(!otherUserDB) otherUserDB = await this.client.database.User.create(otherKey);
@@ -103,6 +114,7 @@ class _Command extends Command {
                     msg.edit({ embed });
                     return;
                 }
+                this.startUserGame(secondUser.id);
                 timeoutOne = 500;
             } else {
                 embed.description = `${this.client.emojis.spinner} Finding the Nearby Enemies...`;
@@ -112,7 +124,8 @@ class _Command extends Command {
                 const nearbyEnemy = Math.floor(Math.random() * 6);
                 if(!secondUser && (nearbyEnemy == 0 || nearbyEnemy == 1)) {
                     embed.description = `${this.client.emojis.cross} No Enemies were found nearby!`;
-                    return msg.edit({ embed });
+                    msg.edit({ embed });
+                    return this.endUserGame(message.author.id);
                 }
                 const maxStrength = 400;
                 let player = maxStrength;
@@ -288,7 +301,9 @@ class _Command extends Command {
                         cooldowns: userDB.dataValues.cooldowns
                     }, { where: key })
                     .catch(() => {});
+                    this.client.cache.games.delete(key.userID);
                     if(secondUser) {
+                        this.client.cache.games.delete(otherKey.userID);
                         otherUserDB.dataValues.cooldowns[this.conf.name] = Date.now();
                         this.client.database.User.update({
                             pocketCash: `${otherUserDB.dataValues.pocketCash}`,
@@ -296,10 +311,14 @@ class _Command extends Command {
                         }, { where: otherKey })
                         .catch(() => {});
                     }
+                    this.endUserGame(message.author.id);
+                    this.endUserGame(secondUser.id);
                     return;
                 }, 3000);
             }, timeoutOne);
         } catch(e) {
+            this.endUserGame(message.author.id);
+            if(secondUser) this.endUserGame(secondUser.id);
             responder.send({
                 embed: this.client.embeds.error(message.author, {
                     description: `${this.client.emojis.cross} Something went wrong. **${e}**`
@@ -424,6 +443,18 @@ class _Command extends Command {
             'Jamal Wallace',
             'Glenn Weaver'
         ].random();
+    }
+
+    getUserGame(ID) {
+        return this.client.cache.games.get(ID, this.conf.name);
+    }
+
+    startUserGame(ID) {
+        return this.client.cache.games.set(ID, this.conf.name);
+    }
+
+    endUserGame(ID) {
+        return this.client.cache.games.delete(ID, this.conf.nam);
     }
 }
 

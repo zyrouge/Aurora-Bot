@@ -6,5 +6,6 @@
 const { Collection } = require("eris");
 
 module.exports = {
-    messages: new Collection()
+    messages: new Collection(),
+    games: new Collection()
 }
