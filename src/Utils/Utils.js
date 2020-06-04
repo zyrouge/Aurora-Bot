@@ -10,5 +10,6 @@ module.exports = {
     icons: require(`./icons`),
     shop: require(`../data/shop`),
     reactionCollector: require(`./reactionCollector`),
-    parseAvatar: require(`./parseAvatar`)
+    parseAvatar: require(`./parseAvatar`),
+    fetchers: require(`./Fetchers/index`)
 };

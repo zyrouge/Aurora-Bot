@@ -154,7 +154,7 @@ module.exports = class {
 
         /* Running it */
         responder.deleteSelf();
-        cmd.run(message, cmdArgs)
+        const __cmd = cmd.run(message, cmdArgs)
         .then(() => {
             timestamps.set(message.author.id, {
                 time: now,
@@ -162,7 +162,8 @@ module.exports = class {
             });
             setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
         })
-        .catch(e => {
+
+        if(process.env.NODE_ENV === "production") __cmd.catch(e => {
             const chalk = require("chalk");
             console.log(chalk.redBright(`[ ERROR (START) ]`));
             console.log(e);
