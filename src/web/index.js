@@ -11,6 +11,7 @@ const { Strategy } = require("passport-discord").Strategy;
 const helmet = require('helmet');
 const path = require("path");
 const config = require(path.resolve("config"));
+const axios = require("axios");
 
 const web = async ({
     client
@@ -42,6 +43,7 @@ const web = async ({
 
     await bindPassport(server);
     await bindAuth(server);
+    bindPinger();
 
     server.use('/static', express.static(path.join(__dirname, "static")));
     server.get('/ping', (req, res) =>  res.status(200).json({ ok: true }));
@@ -115,4 +117,21 @@ async function bindAuth(server) {
 
     Promise.resolve();
     
+}
+
+async function bindPinger() {
+    
+    setInterval(() => {
+        __pinger();
+    }, 3 * 60 * 1000);
+
+    Promise.resolve();
+    
+}
+
+function __pinger() {
+
+    axios.get(config.website).catch(() => {});
+    if(config.dashboard !== config.website) axios.get(config.dashboard).catch(() => {});
+
 }
