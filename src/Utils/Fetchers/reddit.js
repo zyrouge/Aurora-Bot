@@ -1,9 +1,8 @@
-module.exports = async function (reddit, options = {}) {
+async function reddit(subreddit, options = {}) {
   options.image = !!options.image || true;
   options.nsfw = !!options.nsfw || false;
   options.description = !!options.description || true;
-  options._tries = options._tries || 0;
-  const base = `https://api.reddit.com/r/${reddit}/random`;
+  const base = `https://api.reddit.com/r/${subreddit}/random`;
   const axios = require("axios");
   return new Promise((resolve, reject) => {
     axios
@@ -16,11 +15,7 @@ module.exports = async function (reddit, options = {}) {
         if (!listing) return reject(`No Listing was found.`);
         const post = listing.children[0] ? listing.children[0].data : false;
         if (!post) return reject(`No Post was found.`);
-        if (options._tries > 3) return reject(`Too Many Tries`);
-        if (post.over_18 && !options.nsfw) {
-          ++options._tries;
-          return redditF(reddit, options);
-        }
+        if (post.over_18 && !options.nsfw) return reject(`Post found was NSFW.`);
         const result = {
           name: post.title || null,
           text: options.description && post.selftext ? post.selftext : null,
@@ -33,8 +28,8 @@ module.exports = async function (reddit, options = {}) {
             subscribers: post.subreddit_subscribers || 0,
           },
           url: `https://reddit.com${post.permalink}` || null,
-          image:
-            options.image && post.url && checkURL(post.url) ? post.url : null,
+          image: post.url && checkURL(post.url) ? post.url : null,
+          thumbnail: post.thumbnail && checkURL(post.thumbnail) ? post.thumbnail : null,
           score: post.score || null,
           likes: post.ups || 0,
           dislikes: post.downs || 0,
@@ -49,6 +44,8 @@ module.exports = async function (reddit, options = {}) {
   });
 }
 
+module.exports = reddit;
+
 function checkURL(url) {
-  return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+  return url.match(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i) != null;
 }

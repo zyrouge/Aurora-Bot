@@ -1,5 +1,6 @@
 const path = require('path');
 const Command = require(path.resolve(`src`, `base`, `Command`));
+const { createCanvas, loadImage } = require("canvas");
 
 /** 
  * @author ZYROUGE
@@ -18,46 +19,110 @@ class _Command extends Command {
                 bot: ["embedLinks", "addReactions"],
                 user: []
             },
-            enabled: true
+            enabled: true,
+            cooldown: 60
         });
     }
 
     async run(message, args) {
         const responder = new this.client.responder(message.channel);
-        const embed = this.client.embeds.embed();
-        const X_ICON = "❌";
-        const O_ICON = "⭕";
-        let XO = [
-            [ "1", "2", "3" ],
-            [ "4", "5", "6" ],
-            [ "7", "8", "9" ]
-        ];
-        embed.description = `\`\`\`${this.formatXO(XO, X_ICON, O_ICON)}\`\`\``;
-        const msg = await responder.send({ embed });
-        await msg.addReaction(":one:");
-        await msg.addReaction(":two:");
-        await msg.addReaction(":three:");
-        await msg.addReaction(":four:");
-        await msg.addReaction(":five:");
-        await msg.addReaction(":six:");
-        await msg.addReaction(":seven:");
-        await msg.addReaction(":eight:");
-        await msg.addReaction(":nine:");
+        const userOne = message.author;
+        const userTwo = {
+            username: "kok",
+            id: "kok"
+        };
+
+        const emotes = {
+            x: "🇽",
+            o: "🇴",
+            false: "⬜",
+            ticket: '🎫',
+            time: '⏲️'
+        };
+
+        let XO = Array(3).fill(Array(3).fill(false));
+
+        const logs = new Array();
+
+        logs.push(`${emotes.time} Match decided between **${userOne.username}** and **${userTwo.username}**`);
+        const msg = await responder.send(this.getEmbed(XO, emotes, `TicTacToe`, logs));
+        await msg.addReaction("1️⃣");
+        await msg.addReaction("2️⃣");
+        await msg.addReaction("3️⃣");
+        await msg.addReaction("4️⃣");
+        await msg.addReaction("5️⃣");
+        await msg.addReaction("6️⃣");
+        await msg.addReaction("7️⃣");
+        await msg.addReaction("8️⃣");
+        await msg.addReaction("9️⃣");
+        await msg.addReaction("❌");
+        logs.push(`${emotes.ticket} Match started between **${userOne.username}** and **${userTwo.username}**`);
+
+        const players = new Array();
+        if(userOne) players.push(userOne);
+        if(userTwo) players.push(userTwo);
+        console.log(players);
+
+        const collector = new this.client.utils.reactionCollector.continuousReactionStream(msg,
+            (userID) => (players.map(x => x.id).includes(userID)),
+            {
+                maxMatches: 25,
+                time: 60000
+            }
+        );
+        collector.on("reacted", async (reaction) => {
+            if (reaction.emoji.id == `${this.client.emojis.right}`.replace(/<|>/g, "").split(":").pop()) {
+                if(pages[currentPage + 1]) {
+                    currentPage += 1;
+                    msg.removeReaction(`${this.client.emojis.right}`.replace(/<|>/g, ""), reaction.userID).catch(() => {});
+                    embed = await this.getEmbed(pages, currentPage);
+                    msg.edit({ embed });
+                } else msg.removeReaction(`${this.client.emojis.right}`.replace(/<|>/g, ""), reaction.userID).catch(() => {});
+            } else if (reaction.emoji.id == `${this.client.emojis.left}`.replace(/<|>/g, "").split(":").pop()) {
+                if(pages[currentPage - 1]) {
+                    currentPage -= 1;
+                    msg.removeReaction(`${this.client.emojis.left}`.replace(/<|>/g, ""), reaction.userID).catch(() => {});
+                    embed = await this.getEmbed(pages, currentPage);
+                    msg.edit({ embed });
+                } else msg.removeReaction(`${this.client.emojis.left}`.replace(/<|>/g, ""), reaction.userID).catch(() => {});
+            } else if(reaction.emoji.id === `${this.client.emojis.cross}`.replace(/<|>/g, "").split(":").pop()) {
+                collector.stopListening();
+            }
+        });
+        collector.on("end", () => {
+            msg.removeReactions().catch(() => {});
+        });
+
+        return;
     }
 
-    formatXO(XO, X_ICON, O_ICON) {
-        return [
-            `     |     |     `,
-            `  ${XO[0][0]}  |  ${XO[0][1]}  |  ${XO[0][2]}  `,
-            `_____|_____|_____`,
-            `     |     |     `,
-            `  ${XO[1][0]}  |  ${XO[1][1]}  |  ${XO[1][2]}  `,
-            `_____|_____|_____`,
-            `     |     |     `,
-            `  ${XO[2][0]}  |  ${XO[2][1]}  |  ${XO[2][2]}  `,
-            `     |     |     `
-        ].map(row => `   ${row}   `).join("\n");
+    formatXO(XO, ICON) {
+        return (
+`${ICON[XO[0][0]]}${ICON[XO[0][1]]}${ICON[XO[0][2]]}
+${ICON[XO[1][0]]}${ICON[XO[1][1]]}${ICON[XO[1][2]]}
+${ICON[XO[2][0]]}${ICON[XO[2][1]]}${ICON[XO[2][2]]}`
+        );
     }
+
+    getEmbed(XO, ICON, title, logs) {
+        let copiedLogs = [...logs].reverse();
+        return {
+            embed: {
+                title,
+                fields: [
+                    {
+                        name: `Logs`,
+                        value: copiedLogs.splice(0, 5).join("\n")
+                    },
+                    {
+                        name: `Board`,
+                        value: `${this.formatXO(XO, ICON)}`
+                    }
+                ]
+            }
+        };
+    }
+
 }
 
 module.exports = _Command;
