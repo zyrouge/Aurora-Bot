@@ -15,6 +15,7 @@ class Command {
         usage = "No usage provided.",
         enabled = true,
         guildOnly = false,
+        nsfwOnly = false,
         aliases = new Array(),
         permission = {
             bot: new Array(),
@@ -35,6 +36,7 @@ class Command {
             usage,
             enabled,
             guildOnly,
+            nsfwOnly,
             aliases,
             args,
             cooldown,

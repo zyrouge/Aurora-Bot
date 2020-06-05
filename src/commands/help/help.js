@@ -34,8 +34,8 @@ class _Command extends Command {
                 const index = parseInt(args[0]) - 1;
                 const category = categories[index];
                 embed.title = `Category: ${category.toProperCase()}`;
-                const commands = this.client.commands.filter(x => String(x.conf.category).toLowerCase() == category.toLowerCase());
-                const description = `${commands.map(command => `\`${command.conf.name}\``).join(", ")}`;
+                const commands = this.client.commands.filter(x => String(x.conf.category).toLowerCase() === category.toLowerCase() && !!(x.conf.nsfwOnly) === message.channel.nsfw);
+                const description = `${commands.map(command => `\`${command.conf.name}\``).join(", ") || "None"}`;
                 embed.description = description;
                 if(this.client.utils.icons[category]) embed.thumbnail.url = this.client.utils.icons[category];
                 embed.footer.text = `${this.client.config.prefix}help <command> • ${embed.footer.text}`;

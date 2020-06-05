@@ -112,6 +112,13 @@ module.exports = class {
             return responder.send({ embed: embed });
         };
 
+        /* Handler Other Requirements */
+        if(cmd.conf.nsfwOnly && !message.channel.nsfw) {
+            const embed = this.client.embeds.embed(message.author);
+            embed.description = `\`${cmd.conf.name}\` Command can be used only in **NSFW Channels!**`;
+            return responder.send({ embed: embed });
+        };
+
         /* Check Perms for Bot */
         if(message.channel.guild && cmd.conf.permission) {
             if(cmd.conf.permission.bot) {

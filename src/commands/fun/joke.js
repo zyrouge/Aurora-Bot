@@ -9,11 +9,11 @@ const Command = require(path.resolve(`src`, `base`, `Command`));
 class _Command extends Command {
     constructor (client) {
         super(client, {
-            name: "meme",
+            name: "joke",
             description: "Random memes from subreddit.",
             usage: "",
             guildOnly: false,
-            aliases: ["meme", "dankmeme", "dankmemes"],
+            aliases: ["jokes"],
             permission: {
                 bot: ["embedLinks"],
                 user: []
@@ -25,16 +25,7 @@ class _Command extends Command {
     async run(message, args) {
         const responder = new this.client.responder(message.channel);
         try {
-            const memeReddits = [
-                "MemeEconomy",
-                "ComedyCemetery",
-                "memes",
-                "dankmemes",
-                "PrequelMemes",
-                "terriblefacebookmemes",
-                "funny",
-                "teenagers"
-            ];
+            const memeReddits = [ "jokes", "dadjokes", "cleanjokes" ];
             return this.client.commands.get("reddit").run(message, [ memeReddits.random() ]);
         } catch(e) {
             responder.send({
