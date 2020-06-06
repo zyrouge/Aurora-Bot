@@ -14,7 +14,7 @@ const Languages = {
 class Translator {
     constructor(language) {
         this.language = language && Languages[language] ? language : "english";
-        this.translations = langs[this.language];
+        this.translations = Languages[this.language];
     }
     
     translate(query, ...args) {
