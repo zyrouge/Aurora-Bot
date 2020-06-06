@@ -17,6 +17,7 @@ class Aurora extends Client {
         this.utils = require(`../Utils/Utils`);
         this.embeds = new (require(`../Utils/Embeds`))(this);
         this.responder = require(`../core/Responder/index.js`);
+        this.translator = require(`../core/Translator/index.js`);
         this.emojis = require(`../Utils/Emojis`);
         this.database = require(`../database/index`);
         this.cache = require(`../Utils/Cache`);

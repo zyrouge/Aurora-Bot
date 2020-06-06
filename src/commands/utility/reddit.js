@@ -48,7 +48,7 @@ class _Command extends Command {
             if(res.url) embed.url = res.url;
             if(res.text) embed.description = res.text.substr(0, 300);
             if(res.image) embed.image = { url: res.image };
-            else if(res.thumbnail) embed.thumbnail = { url: templateSettings.thumbnail };
+            else if(res.thumbnail) embed.image = { url: res.thumbnail };
             
             embed.footer = {
                 icon_url: `https://www.redditinc.com/assets/images/site/reddit-logo.png`,

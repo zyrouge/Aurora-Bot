@@ -34,13 +34,20 @@ class _Command extends Command {
                 const index = parseInt(args[0]) - 1;
                 const category = categories[index];
                 embed.title = `Category: ${category.toProperCase()}`;
-                const commands = this.client.commands.filter(x => String(x.conf.category).toLowerCase() === category.toLowerCase() && !!(x.conf.nsfwOnly) === message.channel.nsfw);
-                const description = `${commands.map(command => `\`${command.conf.name}\``).join(", ") || "None"}`;
+                const commands = this.client.commands.filter(x => String(x.conf.category).toLowerCase() === category.toLowerCase());
+                const filteredCommands = commands.filter(x => !!(x.conf.nsfwOnly) === message.channel.nsfw);
+                const hiddenCommandsLength = commands.length - filteredCommands;
+                const description = `${filteredCommands.map(command => `\`${command.conf.name}\``).join(", ") || "None"}`;
                 embed.description = description;
                 if(this.client.utils.icons[category]) embed.thumbnail.url = this.client.utils.icons[category];
-                embed.footer.text = `${this.client.config.prefix}help <command> • ${embed.footer.text}`;
+                embed.footer.text = [
+                    `${this.client.config.prefix}help <command>`,
+                    `${hiddenCommandsLength ? `${hiddenCommandsLength} Hidden Commands` : ""}`,
+                    `${embed.footer.text}`
+                ].join(" • ");
             } else if(args[0] && (this.client.commands.has(args[0]) || this.client.aliases.has(args[0]))) {
                 const command = this.client.commands.get(args[0]) || this.client.commands.get(this.client.aliases.get(args[0]));
+                if(command.conf.nsfwOnly) embed.description = `\`${command.conf.name}\` can be viewed only in an NSFW Channel`;
                 embed = command.helpMsg();
                 embed.footer.text = `<> - Required • [] - Optional • ${embed.footer.text}`;
             } else {
@@ -61,6 +68,7 @@ class _Command extends Command {
                     name: 'Categories',
                     value: categoryArray.join("\n")
                 });
+                embed.footer.text = `Use a NSFW channel to view NSFW commands • ${embed.footer.text}`;
             }
             embed.fields.push({
                 name: `Support`,

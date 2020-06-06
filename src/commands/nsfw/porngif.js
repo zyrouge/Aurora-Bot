@@ -26,7 +26,7 @@ class _Command extends Command {
     async run(message, args) {
         const responder = new this.client.responder(message.channel);
         try {
-            const nsfwReddits = [ "NSFW_GIF", "PornGifs" ];
+            const nsfwReddits = [ "FreshGIF", "PornGifs" ];
             return this.client.commands.get("reddit").run(message, [ nsfwReddits.random() ]);
         } catch(e) {
             responder.send({
