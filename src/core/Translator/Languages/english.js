@@ -4,6 +4,7 @@
 */
 
 module.exports = {
+    COMMAND_DISABLED:       (COMMAND) => `Command \`${COMMAND}\` is disabaled in this server.`,
     PREFIX_CHANGE:          (PREFIX) => `Prefix has been changed to \`${PREFIX}\``,
     HELP_DESC:              (PREFIX, COMMANDS, RANDOMCATNUMBER, RANDOMCATNAME) => (
                                 `Use \`${PREFIX}help <number>\` for Commands in the **Category**\n` +
