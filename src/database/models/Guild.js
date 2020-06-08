@@ -18,11 +18,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true
         },
         muteRole: Sequelize.STRING,
-        prefix: {
-            type: Sequelize.STRING,
-            defaultValue: 's&',
-            allowNull: false
-        },
+        prefix: Sequelize.STRING,
         delResp: {
             type: Sequelize.BOOLEAN,
             defaultValue: false,
@@ -91,6 +87,11 @@ module.exports = (sequelize, Sequelize) => {
         guildnames: {
             type: Sequelize.JSON,
             defaultValue: [],
+            allowNull: false
+        },
+        language: {
+            type: Sequelize.STRING,
+            defaultValue: 'english',
             allowNull: false
         }
     });

@@ -9,8 +9,8 @@ require('dotenv').config();
 require('./Utils/Starter')();
 
 /* Aurora */
-const Aurora = require(`./base/Client`);
-const client = new Aurora(require(`../config`).token, {
+const Aurora = require('aurora');
+const client = new Aurora.Client(require(`../config`).token, {
     firstShardID: 0,
     maxShards: "auto",
     messageLimit: 0,

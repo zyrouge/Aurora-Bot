@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 const ChartJs = require('chart.js');
 const { createCanvas } = require('canvas');
 const moment = require('moment');

@@ -1,5 +1,4 @@
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 
 /** 
  * @author ZYROUGE

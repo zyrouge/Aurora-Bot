@@ -3,9 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
-const CaseHandler = require(path.resolve(`src`, `core`, `Creators`, `Case`));
+const { Command, CaseHandler } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {

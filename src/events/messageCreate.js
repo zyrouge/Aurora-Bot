@@ -6,6 +6,7 @@
 const Eris = require("eris");
 const argsParser = require('command-line-args');
 const path = require("path");
+const Guild = require("../database/models/Guild");
 
 module.exports = class {
     constructor(client) {
@@ -35,19 +36,26 @@ module.exports = class {
             if(!GuildDB) GuildDB = await this.client.database.Guild.create(key);
         }
 
-        /* Handlers */
-        /* AFK */
+        message.language = GuildDB && GuildDB.dataValues && GuildDB.dataValues.language
+            ? GuildDB.dataValues.language
+            : "english";
+        message.prefix = GuildDB && GuildDB.dataValues && GuildDB.dataValues.prefix
+            ? GuildDB.dataValues.prefix
+            : this.client.config.prefix
+
+        // const translator
+
+        /* AFK Handler */
         const afkHandler = require(path.resolve("src", "core", "Handlers", "AFK"));
         let afkResult;
-        if(message.channel.guild && !GuildDB.dataValues.disabledCommands.includes('afk')) afkResult = await afkHandler(this.client, message)
-        /* Level */
+        if(message.channel.guild && !GuildDB.dataValues.disabledCommands.includes('afk')) afkResult = await afkHandler(this.client, message);
+
+        /* Level Handler */
         const LevelHandler = require(path.resolve("src", "core", "Handlers", "Level"));
         if(message.channel.guild && !GuildDB.dataValues.disabledModules.includes('level')) LevelHandler(this.client, message, GuildDB);
 
-        /* Actual Handler */
-        const prefix = this.client.config.prefix;
-        message.prefix = prefix;
-        const prefixRegex = new RegExp(`^(<@!?${this.client.user.id}>|${this.client.utils.escapeRegex(prefix)})\\s*`);
+        /* Prefix Handler */
+        const prefixRegex = new RegExp(`^(<@!?${this.client.user.id}>|${this.client.utils.escapeRegex(message.prefix)})\\s*`);
         if (!prefixRegex.test(message.content)) return;
         const [, matchedPrefix] = message.content.match(prefixRegex);
 
@@ -101,18 +109,17 @@ module.exports = class {
             if(now < expirationTime) return;
         }
 
-        /* Handlers Check */
-        /* AFK */
+        /* AFK Handler (Check) */
         if(afkHandler.command == cmd.conf.name && afkResult) return;
 
-        /* Handler Other Requirements */
+        /* Guild Requirements */
         if(cmd.conf.guildOnly && !message.channel.guild) {
             const embed = this.client.embeds.embed(message.author);
             embed.description = `\`${cmd.conf.name}\` Command can be used only in **Guilds!**`;
             return responder.send({ embed: embed });
         };
 
-        /* Handler Other Requirements */
+        /* NSFW Requirements */
         if(cmd.conf.nsfwOnly && !message.channel.nsfw) {
             const embed = this.client.embeds.embed(message.author);
             embed.description = `\`${cmd.conf.name}\` Command can be used only in **NSFW Channels!**`;
@@ -161,7 +168,9 @@ module.exports = class {
 
         /* Running it */
         responder.deleteSelf();
-        const __cmd = cmd.run(message, cmdArgs)
+        const __cmd = cmd.run(message, cmdArgs, {
+            GuildDB
+        })
         .then(() => {
             timestamps.set(message.author.id, {
                 time: now,
