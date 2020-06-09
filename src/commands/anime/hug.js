@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora");
+const { Command, Responder } = require("aurora");
 const axios = require("axios");
 
 class _Command extends Command {

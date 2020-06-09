@@ -3,10 +3,10 @@
  * @license GPL-3.0
 */
 
+const { Responder, Translator } = require("aurora");
 const Eris = require("eris");
 const argsParser = require('command-line-args');
 const path = require("path");
-const Guild = require("../database/models/Guild");
 
 module.exports = class {
     constructor(client) {
@@ -17,6 +17,7 @@ module.exports = class {
         if(message.author.bot) return;
         if (message.guild && !message.channel.guild.members.get(this.client.user.id).permission.json.sendMessages) return;
 
+        /* Cache Message */
         if(message.guild) {
             const cache = this.client.cache.messages.get(message.channel.guild.id) || [];
             cache.push({
@@ -36,26 +37,38 @@ module.exports = class {
             if(!GuildDB) GuildDB = await this.client.database.Guild.create(key);
         }
 
-        message.language = GuildDB && GuildDB.dataValues && GuildDB.dataValues.language
+        /* Language */
+        const language = GuildDB && GuildDB.dataValues && GuildDB.dataValues.language
             ? GuildDB.dataValues.language
             : "english";
-        message.prefix = GuildDB && GuildDB.dataValues && GuildDB.dataValues.prefix
-            ? GuildDB.dataValues.prefix
-            : this.client.config.prefix
 
-        // const translator
+        /* Prefix */
+        const prefix = GuildDB && GuildDB.dataValues && GuildDB.dataValues.prefix
+            ? GuildDB.dataValues.prefix
+            : this.client.config.prefix;
+        
+
+        /* Responder */
+        const responder = new Responder.CommandMessage(message);
+
+        /* Translator */
+        const translator = new Translator(language);
 
         /* AFK Handler */
         const afkHandler = require(path.resolve("src", "core", "Handlers", "AFK"));
         let afkResult;
-        if(message.channel.guild && !GuildDB.dataValues.disabledCommands.includes('afk')) afkResult = await afkHandler(this.client, message);
+        if(message.channel.guild && !GuildDB.dataValues.disabledCommands.includes('afk')) {
+            afkResult = await afkHandler(this.client, message);
+        }
 
         /* Level Handler */
         const LevelHandler = require(path.resolve("src", "core", "Handlers", "Level"));
-        if(message.channel.guild && !GuildDB.dataValues.disabledModules.includes('level')) LevelHandler(this.client, message, GuildDB);
+        if(message.channel.guild && !GuildDB.dataValues.disabledModules.includes('level')) {
+            LevelHandler(this.client, message, GuildDB);
+        }
 
         /* Prefix Handler */
-        const prefixRegex = new RegExp(`^(<@!?${this.client.user.id}>|${this.client.utils.escapeRegex(message.prefix)})\\s*`);
+        const prefixRegex = new RegExp(`^(<@!?${this.client.user.id}>|${this.client.utils.escapeRegex(prefix)})\\s*`);
         if (!prefixRegex.test(message.content)) return;
         const [, matchedPrefix] = message.content.match(prefixRegex);
 
@@ -65,20 +78,18 @@ module.exports = class {
         let cmd = this.client.commands.get(command) || this.client.commands.get(this.client.aliases.get(command));
         if(!cmd) return;
 
-        const responder = new this.client.responder.CommandMessage(message);
-
         /* Check if Disabled Command */
         if(message.channel.guild && GuildDB.dataValues.disabledCommands.includes(cmd.conf.name)) {
             const embed = this.client.embeds.error(message.author);
-            embed.description = `\`${cmd.conf.name}\` Command is **Disabled** in this Server.`;
-            return responder.send({ embed: embed });
+            embed.description = translator.translate("COMMAND_DISABLED", cmd.conf.name);
+            return responder.send({ embed });
         }
 
         /* Check if Disabled Module */
         if(message.channel.guild && GuildDB.dataValues.disabledModules.includes(cmd.conf.category.toLowerCase())) {
             const embed = this.client.embeds.error(message.author);
-            embed.description = `\`${cmd.conf.category}\` Module is **Disabled** in this Server.`;
-            return responder.send({ embed: embed });
+            embed.description = translator.translate("MODULE_DISABLED", cmd.conf.category);
+            return responder.send({ embed });
         }
 
         /* Cooldown */
@@ -97,7 +108,7 @@ module.exports = class {
 
             if (now - lastCooldownMessage > 3000) {
                 const timeLeft = (expirationTime - now) / 1000;
-                responder.send(`Please wait **${timeLeft.toFixed(1)} second${timeLeft > 1 ? "s" : ""}** before reusing the \`${cmd.conf.name}\` command.`);
+                responder.send(translator.translate("COOLDOWN_WAIT", timeLeft, cmd.conf.name));
                 const updated = {
                     time: userCooldown.time,
                     last: now
@@ -115,14 +126,14 @@ module.exports = class {
         /* Guild Requirements */
         if(cmd.conf.guildOnly && !message.channel.guild) {
             const embed = this.client.embeds.embed(message.author);
-            embed.description = `\`${cmd.conf.name}\` Command can be used only in **Guilds!**`;
+            embed.description = translator.translate("COMMAND_GUILDONLY", cmd.conf.name);
             return responder.send({ embed: embed });
         };
 
         /* NSFW Requirements */
         if(cmd.conf.nsfwOnly && !message.channel.nsfw) {
             const embed = this.client.embeds.embed(message.author);
-            embed.description = `\`${cmd.conf.name}\` Command can be used only in **NSFW Channels!**`;
+            embed.description = translator.translate("COMMAND_NSFWONLY", cmd.conf.name);
             return responder.send({ embed: embed });
         };
 
@@ -136,7 +147,7 @@ module.exports = class {
                 });
                 if(missingPermissions.length !== 0) {
                     const embed = this.client.embeds.error();
-                    embed.description = `${this.client.emojis.cross} I am missing ${missingPermissions.map(perm => `\`${perm}\``).join(", ")} permission${missingPermissions.length > 1 ? "s" : ""}!`;
+                    embed.description = translator.translate("MISSING_PERMISSION_BOT", missingPermissions);
                     return responder.send({ embed: embed });
                 }
             }
@@ -150,7 +161,7 @@ module.exports = class {
                 });
                 if(missingPermissions.length !== 0) {
                     const embed = this.client.embeds.error();
-                    embed.description = `${this.client.emojis.cross} You are missing ${missingPermissions.map(perm => `\`${perm}\``).join(", ")} permission${missingPermissions.length > 1 ? "s" : ""}!`;
+                    embed.description = translator.translate("MISSING_PERMISSION_USER", missingPermissions);
                     return responder.send({ embed: embed });
                 }
             }
@@ -168,29 +179,33 @@ module.exports = class {
 
         /* Running it */
         responder.deleteSelf();
-        const __cmd = cmd.run(message, cmdArgs, {
-            GuildDB
-        })
-        .then(() => {
-            timestamps.set(message.author.id, {
-                time: now,
-                last: (now - 4000)
-            });
-            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-        })
-
-        if(process.env.NODE_ENV === "production") __cmd.catch(e => {
-            const chalk = require("chalk");
-            console.log(chalk.redBright(`[ ERROR (START) ]`));
-            console.log(e);
-            console.log(chalk.gray(`Event: messageCreate`));
-            console.log(chalk.gray(`Logged on: ${require("../Utils/getTime")()}`));
-            console.log(chalk.redBright(`[ ERROR (END) ]`));
-            responder.send({
-                embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong! **${e}**`
-                })
-            });
+        const Command = await cmd.run(message, cmdArgs, {
+            GuildDB, prefix, language,
+            Translator: translator,
+            rawArgs: args,
+            Responder: responder
         });
+        
+        timestamps.set(message.author.id, {
+            time: now,
+            last: (now - 4000)
+        });
+        setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
+        if(process.env.NODE_ENV === "production") {
+            Command.catch(e => {
+                const chalk = require("chalk");
+                console.log(chalk.redBright(`[ ERROR (START) ]`));
+                console.log(e);
+                console.log(chalk.gray(`Event: messageCreate`));
+                console.log(chalk.gray(`Logged on: ${require("../Utils/getTime")()}`));
+                console.log(chalk.redBright(`[ ERROR (END) ]`));
+                responder.send({
+                    embed: this.client.embeds.error(message.author, {
+                        description: translator.translate("SOMETHING_WRONG", e)
+                    })
+                });
+            });
+        }
     }
 }
