@@ -58,7 +58,7 @@ module.exports = class {
         const afkHandler = require(path.resolve("src", "core", "Handlers", "AFK"));
         let afkResult;
         if(message.channel.guild && !GuildDB.dataValues.disabledCommands.includes('afk')) {
-            afkResult = await afkHandler(this.client, message);
+            afkResult = await afkHandler(this.client, message, responder, translator);
         }
 
         /* Level Handler */

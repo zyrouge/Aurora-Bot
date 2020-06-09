@@ -27,6 +27,11 @@ module.exports = {
     MISSING_PERMISSION_BOT: (PERMISSION) => (`${Utils.emojis.cross} I am missing ${PERMISSION.map(perm => `\`${perm}\``).join(", ")} permission${PERMISSION.length > 1 ? "s" : ""}!`),
     MISSING_PERMISSION_USER:(PERMISSION) => (`${Utils.emojis.cross} You are missing ${PERMISSION.map(perm => `\`${perm}\``).join(", ")} permission${PERMISSION.length > 1 ? "s" : ""}!`),
     SOMETHING_WRONG:        (ERROR) => (`${Utils.emojis.cross} Something went wrong!${ERROR ? `**${ERROR}**` : ""}`),
+    USER_AFK:               (USERNAME, DISCRIM, AFKMSG) => (`**${USERNAME}#${DISCRIM}** is Currently AFK. Reason: **${AFKMSG}**`),
+    AFK:                    "AFK",
+    AFK_LOG_MSG:            (USER, TIME) => (`${USER} on ${TIME}`),
+    CONTENT:                (MESSAGE) => (`**Content:** ${MESSAGE}`),
+    AFK_REMOVED:            (PINGS) => (`${Utils.emojis.tick} Removed Your AFK. ${PINGS ? `You were pinged **${PINGS}** times.\nLogs:` : ""}`),
 
     /* Numbers */
     "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9", "0": "0"
