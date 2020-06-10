@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -22,11 +21,10 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         if(!args.length) return responder.send({
             embed: this.client.embeds.error(message.author, {
-                description: `${this.client.emojis.cross} Provide Some Text to Clapify!`
+                description: translator.translate("NO_PARAMETER_PROVIDED", "Text")
             })
         });
         try {
@@ -34,7 +32,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

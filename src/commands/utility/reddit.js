@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -22,12 +21,11 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             if(!args.length) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} No Subreddit name was provided!`
+                    description: translator.translate("NO_PARAMETER_PROVIDED", "subreddit")
                 })
             });
     
@@ -48,7 +46,7 @@ class _Command extends Command {
             if(res.url) embed.url = res.url;
             if(res.text) embed.description = res.text.substr(0, 300);
             if(res.image) embed.image = { url: res.image };
-            else if(res.thumbnail) embed.thumbnail = { url: templateSettings.thumbnail };
+            else if(res.thumbnail) embed.image = { url: res.thumbnail };
             
             embed.footer = {
                 icon_url: `https://www.redditinc.com/assets/images/site/reddit-logo.png`,
@@ -65,7 +63,7 @@ class _Command extends Command {
     
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

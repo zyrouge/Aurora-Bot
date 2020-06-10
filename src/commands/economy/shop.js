@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 const _ = require("lodash");
 class _Command extends Command {
     constructor (client) {
@@ -23,8 +22,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             let shop = this.client.utils.shop;
             let itemsOnly = new Array();
@@ -83,7 +81,7 @@ class _Command extends Command {
                 ));
                 if(!item) return responder.send({
                     embed: this.client.embeds.embed(null, {
-                        description: `${this.client.emojis.cross} Item \`${args[0]}\` doesn\'t exist in the Shop.`
+                        description: translator.translate("INVALID_ITEM_NAME", args.join(" "))
                     })
                 });
                 const icon = item.emoji && item.emoji.split(":").pop().replace(">", "");
@@ -93,13 +91,13 @@ class _Command extends Command {
                         title: `${item.name.toCamelCase()}`,
                         description: [
                             `**ID:** ${item.id}`,
-                            `**Cost:** ${item.cost} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`,
-                            `**Available:** ${item.available ? this.client.emojis.tick : this.client.emojis.cross}`,
-                            `**Limited:** ${item.limited ? this.client.emojis.tick : this.client.emojis.cross}`,
-                            `**Resale Cost:** ${item.resale ? `${item.resale} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}` : "Cannot be reselled."}`,
-                            `**Maximum Purchase Limit:** ${item.maxInInv ? item.maxInInv : "None"}`,
-                            `**Increase in Success Rate:** ${item.successInc}`,
-                            `**Increase in Bounty Rate:** ${item.bountyInc}`
+                            `**${translator.translate("ITEM_COST")}:** ${item.cost} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`,
+                            `**${translator.translate("AVAILABLE")}:** ${item.available ? this.client.emojis.tick : this.client.emojis.cross}`,
+                            `**${translator.translate("LIMITED")}:** ${item.limited ? this.client.emojis.tick : this.client.emojis.cross}`,
+                            `**${translator.translate("ITEM_RESALE_COST")}:** ${item.resale ? `${item.resale} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}` : translator.translate("CANNOT_RESELL")}`,
+                            `**${translator.translate("MAX_PURCHASE_LIMIT")}:** ${item.maxInInv ? item.maxInInv : translator.translate("NONE")}`,
+                            `**${translator.translate("INC_SUCCESS_RATE")}:** ${item.successInc}`,
+                            `**${translator.translate("INC_BOUNTY_RATE")}:** ${item.bountyInc}`
                         ].join("\n"),
                         thumbnail: { url }
                     })
@@ -108,7 +106,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }
@@ -127,7 +125,7 @@ class _Command extends Command {
         });
         return {
             author: {
-                name: `Shop`,
+                name: translator.translate("SHOP"),
                 icon_url: this.client.utils.icons.shop
             },
             title: `${pages[currentPage].title}`,
@@ -135,7 +133,7 @@ class _Command extends Command {
             timestamp: new Date(),
             fields,
             footer: {
-                text: `Page ${currentPage + 1}/${pages.length} • a&shop [name|id]`,
+                text: `${translator.translate("PAGE")} ${currentPage + 1}/${pages.length} • a&shop [name|id]`,
                 icon_url: `${this.client.user.avatarURL}`
             }
         };

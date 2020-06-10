@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command, Utils } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -23,8 +22,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             const key = { userID: message.author.id };
             let userDB = await this.client.database.User.findOne({ where: key });
@@ -32,7 +30,7 @@ class _Command extends Command {
             let items = userDB.dataValues.items;
             if(!items.length) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} Your Inventory is Empty!`
+                    description: translator.translate("EMPTY_INVENTORY")
                 })
             });
             let pages = new Array();
@@ -47,7 +45,7 @@ class _Command extends Command {
             await msg.addReaction(`${this.client.emojis.left}`.replace(/<|>/g, ""));
             await msg.addReaction(`${this.client.emojis.right}`.replace(/<|>/g, ""));
             await msg.addReaction(`${this.client.emojis.cross}`.replace(/<|>/g, ""));
-            const collector = new this.client.utils.reactionCollector.continuousReactionStream(msg,
+            const collector = new Utils.reactionCollector.continuousReactionStream(msg,
                 (userID) => userID === message.author.id,
                 {
                     maxMatches: 25,
@@ -79,7 +77,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }
@@ -96,8 +94,8 @@ class _Command extends Command {
             })));
             let item = itemsOnly.find(x => x.id == i.id);
             let value = [
-                `**Count:** ${i.count}`,
-                `**Resale Cost:** ${item.resale ? `${item.resale} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}` : "Cannot be reselled."}`
+                `**${translator.translate("COUNT")}:** ${i.count}`,
+                `**${translator.translate("RESALE_COST")}:** ${item.resale ? `${item.resale} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}` : "Cannot be reselled."}`
             ];
             fields.push({
                 name: `${item.emoji} ${item.id} - ${item.name}`,
@@ -106,14 +104,14 @@ class _Command extends Command {
         });
         return {
             author: {
-                name: `Inventory`
+                name: translator.translate("INVENTORY")
             },
             color: this.client.utils.colors.fuschia,
             thumbnail: { url: this.client.utils.icons.inventory },
             timestamp: new Date(),
             fields,
             footer: {
-                text: `Page ${currentPage + 1}/${pages.length}`,
+                text: `${translator.translate("PAGE")} ${currentPage + 1}/${pages.length}`,
                 icon_url: `${this.client.user.avatarURL}`
             }
         };

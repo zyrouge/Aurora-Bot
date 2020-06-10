@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 const ChartJs = require('chart.js');
 const { createCanvas } = require('canvas');
 const moment = require('moment');
@@ -26,8 +25,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             var chartData = {
                 type: 'line',
@@ -35,14 +33,14 @@ class _Command extends Command {
                     labels: [],
                     datasets: [
                         {
-                            label: 'Members Joined',
+                            label: translator.translate("MEMBERS_JOINED"),
                             data: [],
                             backgroundColor: 'rgba(162, 57, 202, 0.2)',
                             borderColor: 'rgba(162, 57, 202, 1)',
                             borderWidth: 1
                         },
                         {
-                            label: 'Members Left',
+                            label: translator.translate("MEMBERS_LEFT"),
                             data: [],
                             backgroundColor: 'rgba(71, 23, 246, 0.2)',
                             borderColor: 'rgba(71, 23, 246, 1)',
@@ -99,7 +97,7 @@ class _Command extends Command {
             if(chartData.data.labels.length < 3) {
                 return responder.send({
                     embed: this.client.embeds.error(null, {
-                        description: `${this.client.emojis.cross} No Statistics were Found.`
+                        description: translator.translate("NO_SMTH_FOUND", "statistics")
                     })
                 })
             }
@@ -122,7 +120,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

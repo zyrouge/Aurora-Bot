@@ -3,9 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
-const CaseHandler = require(path.resolve(`src`, `core`, `Creators`, `Case`));
+const { Command, CaseHandler } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -27,43 +25,42 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             /* Check args */
             if(!args.user) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User **Mention** (or) **ID** was found!`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "User **Mention** (or) **ID**");
+                return responder.send({ embed });
             }
             const argsMute = args.user;
             const toBeMuted = await this.client.parseMention(argsMute) || false;
             const member = message.channel.guild.members.get(toBeMuted) || false;
             if(!toBeMuted || !member) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User was found with \`${argsMute}\``;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_SMTH_FOUND_WITH", "User", argsMute);
+                return responder.send({ embed });
             }
 
             /* Check if Mod */
             if(member && member.isModerator()) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **${tag}** is a Moderator!`;
-                return responder.send({ embed: embed });
+                embed.description = `${this.client.emojis.cross} **${member.user.username}#${member.user.discriminator}** is a Moderator!`;
+                return responder.send({ embed });
             }
 
             /* Check if Admin */
             if(member && member.isAdministrator()) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **${tag}** is a Administrator!`;
-                return responder.send({ embed: embed });
+                embed.description = `${this.client.emojis.cross} **${member.user.username}#${member.user.discriminator}** is a Administrator!`;
+                return responder.send({ embed });
             }
 
             /* Check if could be Punished */
             if(!member.punishable) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} I don\'t have permissions to unmute **${member.user.tag}**!`;
-                return responder.send({ embed: embed });
+                embed.description = `${this.client.emojis.cross} I don\'t have permissions to unmute **${member.user.username}#${member.user.discriminator}**!`;
+                return responder.send({ embed });
             }
             const reason = args.reason.join(" ");
 
@@ -80,7 +77,7 @@ class _Command extends Command {
                     name: "Muted",
                     permissions: 0,
                     hoist: false,
-                    mentionable: false,
+                    mentionable: false
                 }
                 muteRole = await message.channel.guild.createRole(roleOptions, "Mute Role");
                 if(!GuildDB) GuildDB = await this.client.database.Guild.create(key);
@@ -90,8 +87,8 @@ class _Command extends Command {
             /* Check if member has Mute Role */
             if(!member.roles.includes(muteRole.id)) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **${member.user.tag}** isn\'t Muted!`;
-                return responder.send({ embed: embed });
+                embed.description = `${this.client.emojis.cross} **${member.user.username}#${member.user.discriminator}** isn\'t Muted!`;
+                return responder.send({ embed });
             }
 
             /* Create a Case */
@@ -106,18 +103,18 @@ class _Command extends Command {
             member.removeRole(muteRole.id, reason)
             .then(() => {
                 const embed = this.client.embeds.success();
-                embed.description = `${this.client.emojis.tick} **${member.user.tag}** was unmuted!`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("SUCCESS_SMTH_TASK", `${member.user.username}#${member.user.discriminator}`, "unmuted");
+                return responder.send({ embed });
             })
-            .catch((e) => {
+            .catch(err => {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} Something went wrong! (${e})`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("SOMETHING_WRONG", err);
+                return responder.send({ embed });
             });
         } catch (e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

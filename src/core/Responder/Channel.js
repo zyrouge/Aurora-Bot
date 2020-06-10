@@ -29,7 +29,7 @@ class Responder {
         }, msDelete);
     }
     
-    send(content, file = null, shouldDelete = true) {
+    send(content, file, shouldDelete = true) {
         return new Promise((resolve, reject) => {
             if(!content) throw new Error("No Content was passed");
             this.channel.createMessage(content, file)

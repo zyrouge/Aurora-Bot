@@ -1,5 +1,4 @@
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 
 /** 
  * @author ZYROUGE
@@ -22,12 +21,15 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
 
         } catch(e) {
-            
+            responder.send({
+                embed: this.client.embeds.error(message.author, {
+                    description: translator.translate("SOMETHING_WRONG", e)
+                })
+            });
         }
     }
 }

@@ -3,9 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
-const CaseHandler = require(path.resolve(`src`, `core`, `Creators`, `Case`));
+const { Command, CaseHandler } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -27,43 +25,42 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             /* Check args */
             if(!args.user) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User **Mention** (or) **ID** was found!`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "User **Mention** (or) **ID**");
+                return responder.send({ embed });
             }
             const argsKick = args.user;
             const toBeKicked = await this.client.parseMention(argsKick) || false;
             const member = message.channel.guild.members.get(toBeKicked) || false;
             if(!toBeKicked || !member) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User was found with \`${argsKick}\``;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_SMTH_FOUND_WITH", "User", argsKick);
+                return responder.send({ embed });
             }
 
             /* Check if Admin */
             if(member && member.isAdministrator()) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **${member.user.tag}** is a Administrator!`;
-                return responder.send({ embed: embed });
+                embed.description = `${this.client.emojis.cross} **${member.user.username}#${member.user.discriminator}** is a Administrator!`;
+                return responder.send({ embed });
             }
 
             /* Check if Mod */
             if(member && member.isModerator()) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **${member.user.tag}** is a Moderator!`;
-                return responder.send({ embed: embed });
+                embed.description = `${this.client.emojis.cross} **${member.user.username}#${member.user.discriminator}** is a Moderator!`;
+                return responder.send({ embed });
             }
 
             /* Check if could be Kicked */
             if(!member.kickable) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} I don\'t have permission to kick **${member.user.tag}**!`;
-                return responder.send({ embed: embed });
+                embed.description = `${this.client.emojis.cross} I don\'t have permission to kick **${member.user.username}#${member.user.discriminator}**!`;
+                return responder.send({ embed });
             }
             const reason = args.reason.join(" ");
 
@@ -79,18 +76,18 @@ class _Command extends Command {
             this.client.kickGuildMember(message.channel.guild.id, toBeKicked, reason)
             .then(() => {
                 const embed = this.client.embeds.success();
-                embed.description = `${this.client.emojis.tick} **${member.user.tag}** was kicked!`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("SUCCESS_SMTH_TASK", `**${member.user.username}#${member.user.discriminator}**`, "kicked");
+                return responder.send({ embed });
             })
-            .catch((e) => {
+            .catch(err => {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} Something went wrong! (${e})`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("SOMETHING_WRONG", err);
+                return responder.send({ embed });
             });
         } catch (e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

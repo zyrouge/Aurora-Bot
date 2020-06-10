@@ -3,9 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
-const CaseHandler = require(path.resolve(`src`, `core`, `Creators`, `Case`));
+const { Command, CaseHandler } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -23,13 +21,12 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             if(!args[0]) {
                 return responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} Provide a **Case Number**.`
+                        description: translator.translate("NO_PARAMETER_PROVIDED", "Case Number")
                     })
                 });
             }
@@ -37,7 +34,7 @@ class _Command extends Command {
             if(isNaN(args[0])) {
                 return responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} Provide a **Case Number**.`
+                        description: translator.translate("INVALID_PARAMETER", "Case Number")
                     })
                 });
             }
@@ -45,7 +42,7 @@ class _Command extends Command {
             if(!args[1]) {
                 return responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} Provide a **Reason** to edit the Case\'s Reason.`
+                        description: translator.translate("PROVIDE_SMTH_TO", "**Reason**", `edit the Case\'s Reason.`)
                     })
                 });
             }
@@ -60,7 +57,7 @@ class _Command extends Command {
             const baseCase = await this.client.database.ModCase.findOne({ where: key });
             if(!baseCase || !baseCase.dataValues) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} No Case was found with **ID ${caseNum}**`
+                    description: translator.translate("NO_SMTH_FOUND_WITH", "Case", `ID ${caseNum}`)
                 })
             });
             let correctedCase = baseCase.dataValues;
@@ -84,21 +81,21 @@ class _Command extends Command {
             .then(() => {
                 responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.tick} **Case ${caseNum}** was updated successfully.`
+                        description: translator.translate("SUCCESS_SMTH_TASK", `**Case ${caseNum}**`, "updated")
                     })
                 });
             })
-            .catch(e => {
+            .catch(err => {
                 responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} Couldn\'t update the Case. **${e}**`
+                        description: translator.translate("COULDNT_TASK", "update the Case", err)
                     })
                 });
             });
         } catch(e) {        
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -17,25 +16,24 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             if(!args.length) return responder.send({ embed: this.helpMsg() });
             const userID = await this.client.parseMention(args[0]);
             const member = message.channel.guild.members.get(userID);
             if(!userID || !member) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **Invalid User** was provided.`;
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "Invalid User");
                 return responder.send({ embed });
             }
             if(!args[1]) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No **Purge Amount** was provided.`;
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "Purge Amount");
                 return responder.send({ embed });
             }
             if(isNaN(args[1])) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **Invalid Number** was provided.`;
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "Invalid Number");
                 return responder.send({ embed });
             }
             const amount = parseInt(args[1]);
@@ -56,7 +54,7 @@ class _Command extends Command {
             console.error(e);
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

@@ -16,6 +16,14 @@ async function reddit(subreddit, options = {}) {
         const post = listing.children[0] ? listing.children[0].data : false;
         if (!post) return reject(`No Post was found.`);
         if (post.over_18 && !options.nsfw) return reject(`Post found was NSFW.`);
+        let image = null;
+        if(
+          post.crosspost_parent_list &&
+          post.crosspost_parent_list.secure_media &&
+          post.crosspost_parent_list.secure_media.thumbnail_url &&
+          checkURL(post.crosspost_parent_list.secure_media.thumbnail_url)
+        ) image = post.crosspost_parent_list.secure_media.thumbnail_url;
+        if(post.url && checkURL(post.url)) image = post.url;
         const result = {
           name: post.title || null,
           text: options.description && post.selftext ? post.selftext : null,
@@ -28,7 +36,7 @@ async function reddit(subreddit, options = {}) {
             subscribers: post.subreddit_subscribers || 0,
           },
           url: `https://reddit.com${post.permalink}` || null,
-          image: post.url && checkURL(post.url) ? post.url : null,
+          image,
           thumbnail: post.thumbnail && checkURL(post.thumbnail) ? post.thumbnail : null,
           score: post.score || null,
           likes: post.ups || 0,

@@ -3,8 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
+const { Command } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -22,8 +21,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, ...others) {
         try {
             const memeReddits = [
                 "MemeEconomy",
@@ -35,11 +33,11 @@ class _Command extends Command {
                 "funny",
                 "teenagers"
             ];
-            return this.client.commands.get("reddit").run(message, [ memeReddits.random() ]);
+            return this.client.commands.get("reddit").run(message, [ memeReddits.random() ], ...others);
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

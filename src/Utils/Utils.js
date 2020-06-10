@@ -11,5 +11,6 @@ module.exports = {
     shop: require(`../data/shop`),
     reactionCollector: require(`./reactionCollector`),
     parseAvatar: require(`./parseAvatar`),
-    fetchers: require(`./Fetchers/index`)
+    fetchers: require(`./Fetchers/index`),
+    emojis: require(`./Emojis`)
 };

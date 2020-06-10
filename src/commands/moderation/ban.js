@@ -3,9 +3,7 @@
  * @license GPL-3.0
 */
 
-const path = require('path');
-const Command = require(path.resolve(`src`, `base`, `Command`));
-const CaseHandler = require(path.resolve(`src`, `core`, `Creators`, `Case`));
+const { Command, CaseHandler } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -28,14 +26,13 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             /* Check args */
             if(!args.user) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User **Mention** (or) **ID** was found!`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "User **Mention** (or) **ID**");
+                return responder.send({ embed });
             }
             const argsBan = args.user;
             const toBeBanned = await this.client.parseMention(argsBan, true) || false;
@@ -43,8 +40,8 @@ class _Command extends Command {
             const member = message.channel.guild.members.get(toBeBanned) || false;
             if(!toBeBanned || (!member && !user)) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User was found with \`${argsBan}\``;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_SMTH_FOUND_WITH", "User", argsBan);
+                return responder.send({ embed });
             }
 
             const tag = member ? `${member.user.username}#${member.user.discriminator}` : `${user.username}#${user.discriminator}`;
@@ -54,21 +51,21 @@ class _Command extends Command {
             if(member && member.isAdministrator()) {
                 const embed = this.client.embeds.error();
                 embed.description = `${this.client.emojis.cross} **${tag}** is a Administrator!`;
-                return responder.send({ embed: embed });
+                return responder.send({ embed });
             }
 
             /* Check if Mod */
             if(member && member.isModerator()) {
                 const embed = this.client.embeds.error();
                 embed.description = `${this.client.emojis.cross} **${tag}** is a Moderator!`;
-                return responder.send({ embed: embed });
+                return responder.send({ embed });
             }
 
             /* Check if could be banned */
             if(member && !member.bannable) {
                 const embed = this.client.embeds.error();
                 embed.description = `${this.client.emojis.cross} I don\'t have permission to ban **${tag}**!`;
-                return responder.send({ embed: embed });
+                return responder.send({ embed });
             }
 
             /* Params */
@@ -88,17 +85,17 @@ class _Command extends Command {
             .then(() => {
                 const embed = this.client.embeds.success();
                 embed.description = `${this.client.emojis.tick} **${tag}** was banned!`;
-                return responder.send({ embed: embed });
+                return responder.send({ embed });
             })
             .catch((e) => {
                 const embed = this.client.embeds.error();
                 embed.description = `${this.client.emojis.cross} Something went wrong! (${e})`;
-                return responder.send({ embed: embed });
+                return responder.send({ embed });
             });
         } catch(e) {        
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }
