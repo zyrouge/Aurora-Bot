@@ -42,7 +42,7 @@ module.exports = {
     PAT_MSG:                (USER, TARGET) => (`${USER}ले **${TARGET}**लाई pat गर्नुभयो।`),
     POKE_MSG:               (USER, TARGET) => (`${USER}ले **${TARGET}**लाई poke गर्नुभयो।`),
     SMUG_MSG:               (USER) => `${USER}ले smug गर्नुभयो!`,
-    TICKLE_MSG:             (USER, TARGET) => (`${USER} tickles **${TARGET}**`),
+    TICKLE_MSG:             (USER, TARGET) => (`${USER}ले **${TARGET}**लाई tackle गर्नुभयो।`),
     WINK_MSG:               (USER) => `${USER}ले अँखा झिम्काउनुभयो!`,
     POCKET:                 "खल्ती",
     CASH:                   "पैसा",
