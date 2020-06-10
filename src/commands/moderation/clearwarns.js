@@ -25,22 +25,21 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             /* Check args */
             if(!args.user) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User **Mention** (or) **ID** was found!`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "User **Mention** (or) **ID**");
+                return responder.send({ embed });
             }
             const argsWarn = args.user;
             const toBeWarned = await this.client.parseMention(argsWarn) || false;
             const member = message.channel.guild.members.get(toBeWarned) || false;
             if(!toBeWarned || !member) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No User was found with \`${argsWarn}\``;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_SMTH_FOUND_WITH", "User", argsWarn);
+                return responder.send({ embed });
             }
 
             const reason = args.reason.join(" ");
@@ -66,19 +65,19 @@ class _Command extends Command {
             await this.client.database.Member.update({ warnings }, { where: key })
             .then(() => {
                 const embed = this.client.embeds.success();
-                embed.description = `${this.client.emojis.tick} No warnings were found for **${member.user.tag}**!`
-                if(warnLength > 0) embed.description = `${this.client.emojis.tick} Cleared **${warnLength}** of **${member.user.tag}**!`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("NO_SMTH_FOUND_FOR", "warnings", `${member.user.username}#${member.user.discriminator}`);
+                if(warnLength > 0) embed.description = `${this.client.emojis.tick} Cleared **${warnLength}** of **${member.user.username}#${member.user.discriminator}**!`;
+                return responder.send({ embed });
             })
-            .catch((e) => {
+            .catch(err => {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} Something went wrong! (${e})`;
-                return responder.send({ embed: embed });
+                embed.description = translator.translate("SOMETHING_WRONG", err);
+                return responder.send({ embed });
             });
         } catch (e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

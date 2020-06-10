@@ -21,7 +21,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         if(!this.client.config.owner.includes(message.author.id)) return;
         if(!args[0]) return message.channel.createMessage(`${this.client.emojis.cross} No Command was Provided!`);
         if(this.client.commands.has(args[0]) || this.client.aliases.has(args[0])) {

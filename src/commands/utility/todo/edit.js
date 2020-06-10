@@ -16,17 +16,16 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             if(!args[0] || !args[1]) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Provide some Index and Task to be edited!`
+                    description: translator.translate("NO_PARAMETER_PROVIDED", "Index and Task")
                 })
             });
             if(isNaN(args[0])) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Index must be a Number!`
+                    description: translator.translate("INVALID_PARAMETER", "Index")
                 })
             });
             const key = { userID: message.author.id };
@@ -58,7 +57,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

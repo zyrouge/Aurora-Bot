@@ -3,6 +3,10 @@
  * @license GPL-3.0
 */
 
+const Utils = {
+    emojis: require("../../../Utils/Emojis")
+}; // require("aurora") will return an empty object due to NodeJS file system
+
 module.exports = {
     PREFIX_CHANGE:          (PREFIX) => `प्रीफिक्स ${PREFIX} मा परिवर्तन भएको छ।`,
     HELP_DESC:              (PREFIX, COMMANDS) => (
@@ -17,7 +21,7 @@ module.exports = {
     WEBSITE:                "वेबसाईट",
     TRANSLATION_ERROR:      "भाषा परिवर्तनमा केही समस्या आएको छ।",
     GUILD_LANGUAGE:         "यो संजालको भषा नेपाली हो।",
-    MODULE_DISABLED:        (MODULE) => (`मोड्यूल \`${MODULE}\`लाई यो सन्जालमा **अक्षम** गरिएको छ।`),
+    MODULE_DISABLED:        (MODULE) => (`मोड्यूल \`${MODULE}\` लाई यो सन्जालमा **अक्षम** गरिएको छ।`),
     COOLDOWN_WAIT:          (TIMELEFT, COMMAND) => (`आदेश \`${COMMAND}\` को फेरि प्रयोग गर्न कृपया **${TIMELEFT.toFixed(1)} सेकेन्ड पर्खनुहोला।`),
     COMMAND_GUILDONLY:      (COMMAND) => (`आदेश \`${COMMAND}\` को प्रयोग **प्रत्यक्ष** सन्जालमा मात्र गर्न मिल्छ।`),
     COMMAND_NSFWONLY:       (COMMAND) => (`यो आदेश \`${COMMAND}\` संबेदनसिल आदेश भएकाले कृपया **NSFW Channel** को प्रयोग गर्नुहोला।`),
@@ -29,7 +33,9 @@ module.exports = {
     AFK_LOG_MSG:            (USER, TIME) => (`${USER} - समय ${TIME}`),
     CONTENT:                (MESSAGE) => (`**सन्देश:** ${MESSAGE}`),
     AFK_REMOVED:            (PINGS) => (`${Utils.emojis.tick} तपाईंलाई निष्क्रिय कोटीबाट हटाइएको छ। ${PINGS ? `तपाईंलाई **${PINGS}** पटक बोलाइएको थियो।\n:लगहरू` : ""}`),
-    MONTHS:                 ["बैशाख", "जेठ", "असार", "श्रावण", "भदौ", "असोज", "कात्तिक", "मङ्सिर", "पुष", "माघ", "फागुन", "चैत"]
+
+    /* Months */
+    MONTHS:                 ["बैशाख", "जेठ", "असार", "श्रावण", "भदौ", "असोज", "कात्तिक", "मङ्सिर", "पुष", "माघ", "फागुन", "चैत"],
 
     /* Numbers */
     "1": "१", "2": "२", "3": "३", "4": "४", "5": "५", "6": "६", "7": "७", "8": "८", "9": "९", "0": "०"

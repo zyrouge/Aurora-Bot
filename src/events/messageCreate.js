@@ -127,14 +127,14 @@ module.exports = class {
         if(cmd.conf.guildOnly && !message.channel.guild) {
             const embed = this.client.embeds.embed(message.author);
             embed.description = translator.translate("COMMAND_GUILDONLY", cmd.conf.name);
-            return responder.send({ embed: embed });
+            return responder.send({ embed });
         };
 
         /* NSFW Requirements */
         if(cmd.conf.nsfwOnly && !message.channel.nsfw) {
             const embed = this.client.embeds.embed(message.author);
             embed.description = translator.translate("COMMAND_NSFWONLY", cmd.conf.name);
-            return responder.send({ embed: embed });
+            return responder.send({ embed });
         };
 
         /* Check Perms for Bot */
@@ -148,7 +148,7 @@ module.exports = class {
                 if(missingPermissions.length !== 0) {
                     const embed = this.client.embeds.error();
                     embed.description = translator.translate("MISSING_PERMISSION_BOT", missingPermissions);
-                    return responder.send({ embed: embed });
+                    return responder.send({ embed });
                 }
             }
 
@@ -162,7 +162,7 @@ module.exports = class {
                 if(missingPermissions.length !== 0) {
                     const embed = this.client.embeds.error();
                     embed.description = translator.translate("MISSING_PERMISSION_USER", missingPermissions);
-                    return responder.send({ embed: embed });
+                    return responder.send({ embed });
                 }
             }
         }
@@ -180,10 +180,12 @@ module.exports = class {
         /* Running it */
         responder.deleteSelf();
         const Command = await cmd.run(message, cmdArgs, {
-            GuildDB, prefix, language,
-            Translator: translator,
-            rawArgs: args,
-            Responder: responder
+            GuildDB,
+            prefix,
+            language,
+            translator,
+            responder,
+            rawArgs: args
         });
         
         timestamps.set(message.author.id, {

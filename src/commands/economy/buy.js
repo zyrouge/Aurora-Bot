@@ -25,8 +25,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             let shop = this.client.utils.shop;
             let itemsOnly = new Array();
@@ -36,7 +35,7 @@ class _Command extends Command {
             })));
             if(!args.item.length) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} Provide a Item **Name or ID** to buy from the Shop.`
+                    description: translator.translate("PROVIDE_ITEM_NAME")
                 })
             });
             const item = itemsOnly.find(x => (
@@ -46,7 +45,7 @@ class _Command extends Command {
             const buyCount = args.count;
             if(!item) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} Item \`${args.item.join(" ")}\` doesn\'t exist in the Shop.`
+                    description: translator.translate("INVALID_ITEM_NAME", args.item.join(" "))
                 })
             });
             const key = { userID: message.author.id };
@@ -59,7 +58,7 @@ class _Command extends Command {
                 (item.gold && userDB.dataValues.pocketGold < item.cost * buyCount)
             ) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} You don\'t have enough cash to buy **${buyCount > 1 ? `${buyCount} ${item.name.toCamelCase()}s` : `${item.name.toCamelCase()}`}**.`
+                    description: translator.translate("NO_MONEY_BUY_COUNT", buyCount, item.name.toCamelCase())
                 })
             });
             let existInHisAcc = userDB.dataValues.items.find(x => x.id == item.id);
@@ -71,7 +70,7 @@ class _Command extends Command {
                 )
             ) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} You cannot buy that many **${item.name.toCamelCase()}**.`
+                    description: translator.translate("PURCHASE_EXCEED", item.name.toCamelCase())
                 })
             });
             const checkout = item.cost * buyCount;
@@ -96,13 +95,13 @@ class _Command extends Command {
                 responder.send({
                     embed: this.client.embeds.success(message.author, {
                         description: [
-                            `${this.client.emojis.tick} Purchase Success!`,
-                            ``,
-                            `__**Bill**__`,
-                            `**Item Name:** ${item.emoji} ${item.name}`,
-                            `**Item Cost:** ${item.cost} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`,
-                            `**Purchased Count:** ${buyCount}`,
-                            `**Total Checkout:** ${checkout} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`
+                            translator.translate("PURCHASE_SUCCESS"),
+                            "",
+                            `__**${translator.translate("BILL")}**__`,
+                            `**${translator.translate("ITEM_NAME")}:** ${item.emoji} ${item.name}`,
+                            `**${translator.translate("ITEM_COST")}:** ${item.cost} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`,
+                            `**${translator.translate("PURCHASED_COUNT")}:** ${buyCount}`,
+                            `**${translator.translate("TOTAL_CHECKOUT")}:** ${checkout} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`
                         ].join("\n"),
                         thumbnail: { url: this.client.utils.icons.shop }
                     })
@@ -111,14 +110,14 @@ class _Command extends Command {
             .catch(() => {
                 return responder.send({
                     embed: this.client.embeds.embed(message.author, {
-                        description: `${this.client.emojis.cross} Couldn\'t Make that Purchase.`
+                        description: translator.translate("COULDNT_MAKE_PAYMENT")
                     })
                 });
             });
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

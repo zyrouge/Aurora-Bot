@@ -22,18 +22,17 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             const eEmbed = this.client.embeds.error(null, {
-                description: 'Couldn\'t fetch an Image.'
+                description: translator.translate("COULDNT_FETCH_IMAGE")
             });
             const { data } = await axios.get(`https://some-random-api.ml/animu/wink`).catch(e => {
                 return responder.send({ embed: eEmbed });
             });
             if(!data || !data.link) return responder.send({ embed: eEmbed });
             const embed = this.client.embeds.embed();
-            embed.description = `${message.author.mention} winks!`;
+            embed.description = translator.translate("WINK_MSG", message.author.mention);
             embed.image = {
                 url: data.link
             };
@@ -42,7 +41,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

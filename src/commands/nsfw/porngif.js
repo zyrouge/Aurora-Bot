@@ -22,15 +22,14 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, ...others) {
         try {
             const nsfwReddits = [ "FreshGIF", "PornGifs" ];
-            return this.client.commands.get("reddit").run(message, [ nsfwReddits.random() ]);
+            return this.client.commands.get("reddit").run(message, [ nsfwReddits.random() ], ...others);
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

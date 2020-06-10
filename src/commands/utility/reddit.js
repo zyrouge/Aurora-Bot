@@ -21,12 +21,11 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             if(!args.length) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} No Subreddit name was provided!`
+                    description: translator.translate("NO_PARAMETER_PROVIDED", "subreddit")
                 })
             });
     
@@ -64,7 +63,7 @@ class _Command extends Command {
     
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

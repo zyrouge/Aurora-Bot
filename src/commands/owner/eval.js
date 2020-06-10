@@ -22,7 +22,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         if(!this.client.config.owner.includes(message.author.id)) return;
         const code = args.join(" ");
         try {

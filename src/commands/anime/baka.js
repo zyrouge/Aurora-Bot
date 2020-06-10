@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command, Responder } = require("aurora");
+const { Command, Utils } = require("aurora");
 const axios = require("axios");
 
 class _Command extends Command {
@@ -22,27 +22,26 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             const eEmbed = this.client.embeds.error(null, {
-                description: 'Couldn\'t fetch an Image.'
+                description: translator.translate("COULDNT_FETCH_IMAGE")
             });
             const { data } = await axios.get(`https://nekos.life/api/v2/img/baka`).catch(e => {
                 return responder.send({ embed: eEmbed });
             });
             if(!data || !data.url) return responder.send({ embed: eEmbed });
             const embed = this.client.embeds.embed();
-            embed.description = `${message.author.mention} says **${args.join(" ") || "themselves"}** Baka!`;
+            embed.description = translator.translate(message.author.mention, (args.join(" ") || "themselves"));
             embed.image = {
                 url: data.url
             };
-            embed.color = this.client.utils.colors.pink;
+            embed.color = Utils.colors.pink;
             responder.send({ embed });
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

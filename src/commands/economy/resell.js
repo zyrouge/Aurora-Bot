@@ -25,8 +25,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             let shop = this.client.utils.shop;
             let itemsOnly = new Array();
@@ -36,7 +35,7 @@ class _Command extends Command {
             })));
             if(!args.item.length) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} Provide a Item **Name or ID** to sell from the Inventory.`
+                    description: translator.translate("PROVIDE_ITEM_NAME")
                 })
             });
             const key = { userID: message.author.id };
@@ -47,7 +46,7 @@ class _Command extends Command {
             let items = userDB.dataValues.items;
             if(!items.length) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} Your Inventory is Empty!`
+                    description: translator.translate("EMPTY_INVENTORY")
                 })
             });
             const item = itemsOnly.find(x => (
@@ -56,24 +55,24 @@ class _Command extends Command {
             ));
             if(!item) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} Item \`${args.item.join(" ")}\` doesn\'t exist.`
+                    description: translator.translate("INVALID_ITEM_NAME", args.item.join(" "))
                 })
             });
             const userItem = items.find(x => x.id == item.id);
             if(!userItem) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} You don\'t own \`${item.name}\`!`
+                    description: translator.translate("DONT_OWN_ITEM", item.name)
                 })
             });
             if(!item.resale) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} You can\'t resell \`${item.name}\`!`
+                    description: translator.translate("NO_RESELL", item.name)
                 })
             });
             const sellCount = args.count;
             if(sellCount && sellCount > userItem.count) return responder.send({
                 embed: this.client.embeds.embed(message.author, {
-                    description: `${this.client.emojis.cross} You only have **${userItem.count}** of \`${item.name}\`!`
+                    description: translator.translate("ONLY_HAVE_ITEM", userItem.count, item.name)
                 })
             });
             const checkout = item.resale * sellCount;
@@ -96,13 +95,13 @@ class _Command extends Command {
                 responder.send({
                     embed: this.client.embeds.success(message.author, {
                         description: [
-                            `${this.client.emojis.tick} Sold!`,
+                            `${this.client.emojis.tick} ${translator.translate("SOLD")}!`,
                             ``,
-                            `__**Bill**__`,
-                            `**Item Name:** ${item.emoji} ${item.name}`,
-                            `**Item Resale Cost:** ${item.resale} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`,
-                            `**Sold Count:** ${sellCount}`,
-                            `**Total Checkout:** ${checkout} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`
+                            `__**${translator.translate("BILL")}**__`,
+                            `**${translator.translate("ITEM_NAME")}:** ${item.emoji} ${item.name}`,
+                            `**${translator.translate("ITEM_RESALE_COST")}:** ${item.resale} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`,
+                            `**${translator.translate("SOLD_COUNT")}:** ${sellCount}`,
+                            `**${translator.translate("TOTAL_CHECKOUT")}:** ${checkout} ${item.gold ? this.client.emojis.goldCash : this.client.emojis.cash}`
                         ].join("\n"),
                         thumbnail: { url: this.client.utils.icons.shop }
                     })
@@ -111,14 +110,14 @@ class _Command extends Command {
             .catch(() => {
                 return responder.send({
                     embed: this.client.embeds.embed(message.author, {
-                        description: `${this.client.emojis.cross} Couldn\'t Make that Purchase.`
+                        description: translator.translate("PURCHASE_FAILED")
                     })
                 });
             });
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

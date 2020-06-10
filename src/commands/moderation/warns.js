@@ -21,8 +21,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             /* Check args */
             const user = message.mentions.length > 0 ? message.mentions[0] : message.author;
@@ -40,11 +39,11 @@ class _Command extends Command {
             const embed = this.client.embeds.embed();
             embed.description = `${this.client.emojis.tick} No warnings were found for **${user.username}#${user.discriminator}**!`
             if(warnLength > 0) embed.description = `${this.client.emojis.tick} **${user.username}#${user.discriminator}** has **${warnLength}** warnings!`;
-            return responder.send({ embed: embed });
+            return responder.send({ embed });
         } catch (e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

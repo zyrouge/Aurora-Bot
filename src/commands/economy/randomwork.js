@@ -21,8 +21,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         const key = { userID: message.author.id };
         let userDB = await this.client.database.User.findOne({ where: key });
         if(!userDB) userDB = await this.client.database.User.create(key);

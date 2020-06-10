@@ -23,14 +23,13 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         let secondUser = message.mentions[0];
         try {
             const userGame = this.getUserGame(message.author.id);
             if(userGame) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} You are already in a game. (${userGame})`
+                    description: translator.translate("ALREADY_INGAME")
                 })
             });
             const key = { userID: message.author.id };
@@ -39,7 +38,7 @@ class _Command extends Command {
             const cooldown = 45 * 60 * 1000;
             if(userDB.dataValues.cooldowns[this.conf.name] && Date.now() - userDB.dataValues.cooldowns[this.conf.name] < cooldown) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Slowdown **${message.author.username}**! Come back after **${moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]')}** to ${this.conf.name.toCamelCase()} again.`
+                    description: translator.translate("SLOWDOWN_MSG", message.author.username, moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]'), this.conf.name.toCamelCase())
                 })
             });
             this.startUserGame(message.author.id);
@@ -51,7 +50,7 @@ class _Command extends Command {
                 const secondUserGame = this.getUserGame(secondUser.id);
                 if(secondUserGame) return responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} **${secondUser.username}** is already in a game. (${secondUserGame})`
+                        description: translator.translate("USER_ALREADY_INGAME", secondUser.username, secondUserGame)
                     })
                 });
                 otherKey = { userID: secondUser.id };
@@ -60,23 +59,23 @@ class _Command extends Command {
                 otherUserDB.dataValues.pocketCash = parseInt(otherUserDB.dataValues.pocketCash);
                 if(otherUserDB.dataValues.cooldowns[this.conf.name] && Date.now() - userDB.dataValues.cooldowns[this.conf.name] < cooldown) return responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} Slowdown! **${secondUser.username}** has fought recently. He can fight after **${moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]')}**.`
+                        description: translator.translate("FOUGHT_RECENTLY", secondUser.username, moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]'))
                     })
                 });
                 if(userDB.dataValues.pocketCash < 1000) return responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} **${message.author.username}** doesn\'t have **1000** ${this.client.emojis.cash} to bet.`
+                        description: translator.translate("NO_CASH_TO_BET", message.author.username, 1000)
                     })
                 });
                 if(otherUserDB.dataValues.pocketCash < 1000) return responder.send({
                     embed: this.client.embeds.error(message.author, {
-                        description: `${this.client.emojis.cross} **${secondUser.username}** doesn\'t have **1000** ${this.client.emojis.cash} to bet.`
+                        description: translator.translate("NO_CASH_TO_BET", secondUser.username, 1000)
                     })
                 });
             }
             let embed = {
                 author: {
-                    name: `Fight`,
+                    name: translator.translate("FIGHT"),
                     icon_url: `${message.author.avatarURL || message.author.defaultAvatarURL}`
                 },
                 description: null,
@@ -92,7 +91,7 @@ class _Command extends Command {
             let msg;
             if(secondUser) {
                 const selection = ["accept", "decline"];
-                embed.description = `${this.client.emojis.spinner} Waiting for **${secondUser.username}** to Accept.\nType any of these ${selection.map(x => `\`${x}\``).join(", ")} to proceed.\nYou have 20 seconds to do this.`;
+                embed.description = translator.translate("FIGHT_WAITING_REPLY", secondUser.username, selection);
                 msg = await message.channel.createMessage({ embed });
                 const collector = await message.channel.awaitMessages(msg => (
                     msg.author.id == secondUser.id &&
@@ -102,27 +101,27 @@ class _Command extends Command {
                     maxMatches: 1
                 });
                 if(!collector[0]) {
-                    embed.description = `${this.client.emojis.cross} No response was recieved from **${secondUser.username}**. Match Cancelled.`;
+                    embed.description = translator.translate("NO_RESPONSE", secondUser.username, this.conf.name);
                     msg.edit({ embed });
                     return;
                 }
                 const choosenMovement = collector[0].content.toLowerCase().trim();
                 collector[0].delete().catch(() => {});
                 if(choosenMovement == "decline") {
-                    embed.description = `${this.client.emojis.cross} **${secondUser.username}** has declined. Match Cancelled.`;
+                    embed.description = translator.translate("DECLINED_MSG", secondUser.username);
                     msg.edit({ embed });
                     return;
                 }
                 this.startUserGame(secondUser.id);
                 timeoutOne = 500;
             } else {
-                embed.description = `${this.client.emojis.spinner} Finding the Nearby Enemies...`;
+                embed.description = translator.translate("FINDING_NEARBY_ENEMIES");
                 msg = await message.channel.createMessage({ embed });
             }
             setTimeout(() => {
                 const nearbyEnemy = Math.floor(Math.random() * 6);
                 if(!secondUser && (nearbyEnemy == 0 || nearbyEnemy == 1)) {
-                    embed.description = `${this.client.emojis.cross} No Enemies were found nearby!`;
+                    embed.description = translator.translate("NO_NEARBY_ENEMIES");
                     msg.edit({ embed });
                     return this.endUserGame(message.author.id);
                 }
@@ -320,7 +319,7 @@ class _Command extends Command {
             if(secondUser) this.endUserGame(secondUser.id);
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

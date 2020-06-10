@@ -24,8 +24,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             const limit = 10;
             let page = 1;
@@ -52,11 +51,11 @@ class _Command extends Command {
                     name: `${message.guild.name} Leaderboard`,
                     icon_url: message.guild.iconURL
                 },
-                description: `${MemberRanks.length ? "" : "No Results were Found."}`,
+                description: `${MemberRanks.length ? null : translator.translate("NO_RESULT_FOUND")}`,
                 timestamp: new Date(),
                 color: this.client.utils.colors.fuschia,
                 footer: {
-                    text: `Page ${page} • ${this.client.user.username}`,
+                    text: `${translator.translate("PAGE")} ${page} • ${this.client.user.username}`,
                     icon_url: `${this.client.user.avatarURL}`
                 }
             };
@@ -78,7 +77,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

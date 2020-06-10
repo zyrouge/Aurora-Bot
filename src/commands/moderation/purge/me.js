@@ -16,18 +16,17 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             if(!args.length) return responder.send({ embed: this.helpMsg() });
             if(!args[0]) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} No **Purge Amount** was provided.`;
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "Purge Amount");
                 return responder.send({ embed });
             }
             if(isNaN(args[0])) {
                 const embed = this.client.embeds.error();
-                embed.description = `${this.client.emojis.cross} **Invalid Number** was provided.`;
+                embed.description = translator.translate("NO_PARAMETER_PROVIDED", "Invalid Number");
                 return responder.send({ embed });
             }
             const amount = parseInt(args[0]) + 1;
@@ -53,7 +52,7 @@ class _Command extends Command {
         } catch (e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

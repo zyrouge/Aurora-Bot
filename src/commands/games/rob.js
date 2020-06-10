@@ -24,13 +24,12 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             const userGame = this.client.cache.games.get(message.author.id);
             if(userGame) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} You are already in a game. (${userGame})`
+                    description: translator.translate("ALREADY_INGAME")
                 })
             });
             const key = { userID: message.author.id };
@@ -39,19 +38,19 @@ class _Command extends Command {
             const cooldown = 2 * 60 * 60 * 1000;
             if(userDB.dataValues.cooldowns[this.conf.name] && Date.now() - userDB.dataValues.cooldowns[this.conf.name] < cooldown) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Slowdown! Come back after **${moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]')}** to ${this.conf.name.toCamelCase()} again.`
+                    description: translator.translate("SLOWDOWN_MSG", message.author.username, moment.duration(cooldown - (Date.now() - userDB.dataValues.cooldowns[this.conf.name])).format('H[h] m[m] s[s]'), this.conf.name.toCamelCase())
                 })
             });
             let balance = parseInt(userDB.dataValues.pocketCash);
             let bounty = parseInt(userDB.dataValues.bounty);
             if(balance < 1000) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} You need atleast **1000 Currencies** to Rob!`
+                    description: translator.translate("NO_CASH_TO_ROB", 1000)
                 })
             });
             if(bounty > 1000) return responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} You can\'t Rob when your Bounty is above **1000**`
+                    description: translator.translate("HIGH_BOUNTY_TO_SMTH", this.conf.name, 1000)
                 })
             });
             this.client.cache.games.set(message.author.id, this.conf.name);
@@ -111,7 +110,7 @@ class _Command extends Command {
             embed.fields = [];
             let responses = await message.channel.awaitMessages(m => m.author.id == message.author.id, { time: 10000, maxMatches: 1 });
             if(!responses.length) {
-                embed.description = `${this.client.emojis.cross} No Responses was received. The Rob was **Cancelled**!`;
+                embed.description = translator.translate("NO_RESPONSE", message.author.username, this.conf.name)
                 msg.edit({ embed });
                 return this.client.cache.games.delete(message.author.id);
             }
@@ -119,7 +118,7 @@ class _Command extends Command {
             const robPlace = places.find(x => x.name.toLowerCase() == responses[0].content.toLowerCase());
             if(!robPlace) {
                 embed.color = this.client.utils.colors.red;
-                embed.description = `${this.client.emojis.cross} Invalid Response was received. The Rob was **Cancelled**!`;
+                embed.description = translator.translate("INVALID_RESPONSE", message.author.username, this.conf.name);
                 msg.edit({ embed });
                 return this.client.cache.games.delete(message.author.id);
             }
@@ -191,7 +190,7 @@ class _Command extends Command {
                                 this.client.cache.games.delete(message.author.id);
                                 responder.send({
                                     embed: this.client.embeds.error(message.author, {
-                                        description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                                        description: translator.translate("SOMETHING_WRONG", e)
                                     })
                                 });
                             });
@@ -203,7 +202,7 @@ class _Command extends Command {
             this.client.cache.games.delete(message.author.id);
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }

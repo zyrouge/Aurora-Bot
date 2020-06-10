@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora");
+const { Command, Utils } = require("aurora");
 
 class _Command extends Command {
     constructor (client) {
@@ -21,8 +21,7 @@ class _Command extends Command {
         });
     }
 
-    async run(message, args) {
-        const responder = new this.client.responder(message.channel);
+    async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
         try {
             let user;
             if(args[0]) user = this.client.users.get(this.client.parseMention(args[0]));
@@ -31,21 +30,21 @@ class _Command extends Command {
             let userDB = await this.client.database.User.findOne({ where: key });
             if(!userDB) userDB = await this.client.database.User.create(key);
             const embed = this.client.embeds.embed(user);
-            embed.author.name = `${user.tag}'s Balance`;
+            embed.author.name = `${user.tag}'s ${translator.translate("BALANCE")}`;
             embed.fields = [
                 {
-                    name: `Pocket`,
+                    name: translator.translate("POCKET"),
                     value: [
-                        `**Cash:** ${userDB.pocketCash} ${this.client.emojis.cash}`,
-                        `**Gold:** ${userDB.pocketGold} ${this.client.emojis.goldCash}`
+                        `**${translator.translate("CASH")}:** ${userDB.pocketCash} ${Utils.emojis.cash}`,
+                        `**${translator.translate("GOLD")}:** ${userDB.pocketGold} ${Utils.emojis.goldCash}`
                     ].join("\n"),
                     inline: true
                 },
                 {
                     name: `Safe`,
                     value: [
-                        `**Cash:** ${userDB.safeCash} ${this.client.emojis.cash}`,
-                        `**Gold:** ${userDB.safeGold} ${this.client.emojis.goldCash}`
+                        `**${translator.translate("CASH")}:** ${userDB.safeCash} ${Utils.emojis.cash}`,
+                        `**${translator.translate("GOLD")}:** ${userDB.safeGold} ${Utils.emojis.goldCash}`
                     ].join("\n"),
                     inline: true
                 }
@@ -54,7 +53,7 @@ class _Command extends Command {
         } catch(e) {
             responder.send({
                 embed: this.client.embeds.error(message.author, {
-                    description: `${this.client.emojis.cross} Something went wrong. **${e}**`
+                    description: translator.translate("SOMETHING_WRONG", e)
                 })
             });
         }
