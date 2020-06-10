@@ -8,6 +8,7 @@ const Utils = {
 }; // require("aurora") will return an empty object due to NodeJS file system
 
 module.exports = {
+    COMMAND_DISABLED: (COMMAND) => `आदेश \`${COMMAND}\`को प्रयोगलाई यो सन्जालमा निषेध गरिएको छ।`,
     PREFIX_CHANGE:          (PREFIX) => `प्रीफिक्स ${PREFIX} मा परिवर्तन भएको छ।`,
     HELP_DESC:              (PREFIX, COMMANDS) => (
                                 `कोटिमा रहेका आदेशको प्रयोग गर्न \`${PREFIX}help <संख्या>\` को प्रयोग गर्नुहोला\n`+
