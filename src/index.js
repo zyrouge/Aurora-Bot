@@ -12,8 +12,10 @@ let Aurora;
 try {
     Aurora = require("aurora");
 } catch(e) {
-    global.Aurora = Aurora = require("../Aurora");
+    Aurora = require("../Aurora");
 }
+
+global.Aurora = Aurora;
 
 /* Aurora */
 const client = new Aurora.Client(require(`../config`).token, {

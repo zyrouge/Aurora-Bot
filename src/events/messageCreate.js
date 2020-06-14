@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Responder, Translator } = require("aurora") || global.Aurora;
+const { Responder, Translator } = global.Aurora;
 const Eris = require("eris");
 const argsParser = require('command-line-args');
 const path = require("path");
