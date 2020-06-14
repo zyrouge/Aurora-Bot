@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Utils } = require("aurora") || global.Aurora;
+const { Utils } = global.Aurora;
 
 const AFKDisplayer = async (client, message, responder, translator) => {
     return new Promise(async (resolve, reject) => {

@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora") || global.Aurora;
+const { Command } = global.Aurora;
 var moment = require("moment");
 require("moment-duration-format");
 

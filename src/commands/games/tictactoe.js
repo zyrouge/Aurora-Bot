@@ -1,4 +1,4 @@
-const { Command } = require("aurora") || global.Aurora;
+const { Command } = global.Aurora;
 const { createCanvas, loadImage } = require("canvas");
 
 /** 

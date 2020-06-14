@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command, Utils } = require("aurora") || global.Aurora;
+const { Command, Utils } = global.Aurora;
 const axios = require("axios");
 
 class _Command extends Command {
