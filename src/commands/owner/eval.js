@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora");
+const { Command } = require("aurora") || global.Aurora;
 
 class _Command extends Command {
     constructor (client) {
@@ -23,7 +23,7 @@ class _Command extends Command {
     }
 
     async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
-        if(!this.client.config.owner.includes(message.author.id)) return;
+        if(!this.client.config.staffs.includes(message.author.id)) return;
         const code = args.join(" ");
         try {
             const evaled = eval(code);

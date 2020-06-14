@@ -1,3 +1,4 @@
 module.exports = {
-    reddit: require("./reddit")
+    reddit: require("./reddit"),
+    axios: require("axios")
 }

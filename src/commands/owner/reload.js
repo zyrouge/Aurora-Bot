@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora");
+const { Command } = require("aurora") || global.Aurora;
 
 class _Command extends Command {
     constructor (client) {
@@ -22,7 +22,7 @@ class _Command extends Command {
     }
 
     async run(message, args, { GuildDB, prefix, language, translator, responder, rawArgs }) {
-        if(!this.client.config.owner.includes(message.author.id)) return;
+        if(!this.client.config.staffs.includes(message.author.id)) return;
         if(!args[0]) return message.channel.createMessage(`${this.client.emojis.cross} No Command was Provided!`);
         if(this.client.commands.has(args[0]) || this.client.aliases.has(args[0])) {
             this.reload(this.client.commands.get(args[0]) || this.client.commands.get(this.client.aliases.get(args[0])))

@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora");
+const { Command } = require("aurora") || global.Aurora;
 const _ = require("lodash");
 class _Command extends Command {
     constructor (client) {

@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora");
+const { Command } = require("aurora") || global.Aurora;
 const { createCanvas, loadImage, registerFont } = require("canvas");
 const millify = require('millify');
 
