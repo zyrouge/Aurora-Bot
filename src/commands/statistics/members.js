@@ -3,7 +3,7 @@
  * @license GPL-3.0
 */
 
-const { Command } = require("aurora");
+const { Command } = require("aurora") || global.Aurora;
 const ChartJs = require('chart.js');
 const { createCanvas } = require('canvas');
 const moment = require('moment');

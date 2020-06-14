@@ -8,8 +8,14 @@ global.startTime = Date.now();
 require('dotenv').config();
 require('./Utils/Starter')();
 
+let Aurora;
+try {
+    Aurora = require("aurora");
+} catch(e) {
+    global.Aurora = Aurora = require("../Aurora");
+}
+
 /* Aurora */
-const Aurora = require('aurora');
 const client = new Aurora.Client(require(`../config`).token, {
     firstShardID: 0,
     maxShards: "auto",

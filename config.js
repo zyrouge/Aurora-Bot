@@ -16,9 +16,13 @@ const config = {
     support: "https://discord.com/invite/8KV5zCg",
     dashboard: "https://auroradiscordbot.ga",
     website: "https://auroradiscordbot.ga",
-    admin: [],
-    owner: [ "521007613475946496" ],
-    port: 3000
+    port: 3000,
+
+    owners: ["521007613475946496"],
+    developers: ["480933736276426763"],
+    admins: [],
+    helpers: [],
+    get staffs() { return ([...this.owners, ...this.developers]); }
 };
 
 module.exports = config;
