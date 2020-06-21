@@ -1,3 +1,5 @@
+# Project currently on halt!
+
 [![Hero](https://imgur.com/yTfSgds.png)](https://auroradiscordbot.ga)
 
 ![Description](https://i.imgur.com/mcAE3nb.png)
