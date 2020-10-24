@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "aurora": "file:Aurora",
-    "axios": "^0.19.2",
+    "axios": "^0.21.0",
     "body-parser": "^1.19.0",
     "canvas": "^2.6.1",
     "chalk": "^4.0.0",
