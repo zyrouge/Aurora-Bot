@@ -19,7 +19,9 @@
   "homepage": "https://github.com/zyrouge/aurora-bot#readme",
   "dependencies": {
     "discord.js": "^12.4.1",
+    "fs-extra": "^9.0.1",
     "inquirer": "^7.3.3",
+    "lodash": "^4.17.20",
     "yaml": "^1.10.0"
   }
 }
