@@ -2,7 +2,8 @@
   "name": "aurora-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "bin": "lib/cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,7 +13,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/zyrouge/aurora-bot/issues"
   },
@@ -20,8 +21,10 @@
   "dependencies": {
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
+    "fs-extra": "^9.0.1",
     "inquirer": "^7.3.3",
     "log-symbols": "^4.0.0",
-    "ora": "^5.1.0"
+    "ora": "^5.1.0",
+    "simple-git": "^2.21.0"
   }
 }
