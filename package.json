@@ -1,54 +1,27 @@
 {
   "name": "aurora-bot",
-  "version": "0.0.5-alpha",
-  "description": "Best Bot in Discord!",
-  "main": "src/index.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node .",
-    "dev": "cross-env NODE_ENV=development node-dev ."
-  },
-  "keywords": [
-    "discord"
-  ],
-  "author": "ZYROUGE",
-  "license": "GPL-3.0",
-  "engines": {
-    "node": "12.x"
-  },
-  "dependencies": {
-    "aurora": "file:Aurora",
-    "axios": "^0.19.2",
-    "body-parser": "^1.19.0",
-    "canvas": "^2.6.1",
-    "chalk": "^4.0.0",
-    "chart.js": "^2.9.3",
-    "command-line-args": "^5.1.1",
-    "deep-diff": "^1.0.2",
-    "dotenv": "^8.2.0",
-    "ejs": "^3.1.3",
-    "eris": "^0.13.1",
-    "eris-additions": "^1.4.1",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "helmet": "^4.1.1",
-    "lodash": "^4.17.15",
-    "marked": "^1.1.0",
-    "memorystore": "^1.6.2",
-    "millify": "^3.2.1",
-    "moment": "^2.26.0",
-    "moment-duration-format": "^2.3.2",
-    "moment-timezone": "^0.5.31",
-    "passport": "^0.4.1",
-    "passport-discord": "^0.1.3",
-    "sequelize": "^5.21.11",
-    "sqlite3": "^5.0.0",
-    "yaml": "^1.10.0"
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.2"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zyrouge/aurora-bot.git"
+    "url": "git+https://github.com/zyrouge/aurora-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zyrouge/aurora-bot/issues"
+  },
+  "homepage": "https://github.com/zyrouge/aurora-bot#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^6.2.0",
+    "inquirer": "^7.3.3",
+    "log-symbols": "^4.0.0",
+    "ora": "^5.1.0"
   }
 }

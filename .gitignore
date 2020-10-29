@@ -1,7 +1,2 @@
 node_modules
 package-lock.json
-src/logs
-.env
-storage
-shrinkwrap.yaml
-settings.yaml
