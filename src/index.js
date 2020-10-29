@@ -1,5 +1,6 @@
 const { Client, Collection } = require("discord.js");
 const fs = require("fs-extra");
+const { type } = require("os");
 const path = require("path");
 const yaml = require("yaml");
 const utils = require("./utils");
@@ -49,9 +50,12 @@ const getConfig = () => {
 }
 
 const loadPlugins = async (client, plugins) => {
-    for (const pluginName of plugins) {
+    for (const pluginRaw of plugins) {
         try {
+            const pluginSettings = typeof pluginRaw === "object" ? pluginSettings : {};
+            const pluginName = pluginSettings.name || pluginRaw;
             const plugin = require(pluginName);
+
             if (!plugin.action) {
                 utils.logger.warn(`Invalid plugin: No 'action' was found in '${pluginName}'`);
             } else {
@@ -60,9 +64,9 @@ const loadPlugins = async (client, plugins) => {
             }
         } catch (err) {
             if (err && err.code === "MODULE_NOT_FOUND") {
-                utils.logger.error(`Plugin not found: '${pluginName}'`);
+                utils.logger.error(`Plugin not found: '${pluginRaw}'`);
                 exit();
-            } else utils.logger.error(err);
+            } else utils.logger.error(`Invalid plugin: ${err}`);
         }
     }
 }
@@ -85,8 +89,6 @@ const loadCommands = async (client) => {
             utils.logger.error(`Error loading command from '${filepath}': '${err}'`);
         }
     }
-
-    return;
 }
 
 const loadEvents = async (client) => {
@@ -106,8 +108,6 @@ const loadEvents = async (client) => {
             utils.logger.error(`Error loading event from '${filepath}': '${err}'`);
         }
     }
-
-    return;
 }
 
 const start = async () => {
