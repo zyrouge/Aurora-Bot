@@ -1,7 +1,7 @@
 const main = require("./src");
 
 const init = async () => {
-    main();
-}
+  main();
+};
 
 init();
