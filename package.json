@@ -20,7 +20,7 @@
   "homepage": "https://github.com/zyrouge/aurora-bot#readme",
   "dependencies": {
     "chalk": "^4.1.0",
-    "commander": "^6.2.0",
+    "commander": "^7.1.0",
     "fs-extra": "^9.0.1",
     "inquirer": "^7.3.3",
     "log-symbols": "^4.0.0",
