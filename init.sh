@@ -1,0 +1,1 @@
+cp config.yaml.example config.yaml

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +24,9 @@
     "inquirer": "^7.3.3",
     "lodash": "^4.17.20",
     "yaml": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.20.0",
+    "prettier": "^2.2.1"
   }
 }

@@ -1,7 +1,3 @@
-const main = require("./src");
+const main = require('./src');
 
-const init = async () => {
-    main();
-}
-
-init();
+main();
