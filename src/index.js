@@ -59,7 +59,7 @@ const loadPlugins = async (client, plugins) => {
 
       if (!plugin.action) {
         utils.logger.warn(
-          `Invalid plugin: No 'action' was found in '${pluginName}'`
+          `Invalid plugin: No 'action' was found in '${pluginName}'`,
         );
       } else {
         await plugin.action(client);
@@ -69,7 +69,7 @@ const loadPlugins = async (client, plugins) => {
       if (err && err.code === "MODULE_NOT_FOUND") {
         utils.logger.error(`Plugin not found: '${pluginRaw}'`);
         exit();
-      } else utils.logger.error(`Invalid plugin: ${err}`);
+      } else {utils.logger.error(`Invalid plugin: ${err}`);}
     }
   }
 };
@@ -86,10 +86,11 @@ const loadCommands = async (client) => {
 
       command.location = filepath;
       client.commands.labels.set(command.name, command);
-      if (command.aliases)
-        command.aliases.forEach((alias) =>
-          client.commands.aliases.set(alias, command.name)
+      if (command.aliases) {
+command.aliases.forEach((alias) =>
+          client.commands.aliases.set(alias, command.name),
         );
+}
       utils.logger.info(`Command loaded: '${command.name}'`);
     } catch (err) {
       utils.logger.error(`Error loading command from '${filepath}': '${err}'`);
@@ -129,7 +130,7 @@ const start = async () => {
     if (err && err.code === "TOKEN_INVALID") {
       utils.logger.error("Invalid 'token' was provided");
       exit();
-    } else utils.logger.error(err);
+    } else {utils.logger.error(err);}
   });
 };
 

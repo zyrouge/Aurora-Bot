@@ -1,7 +1,7 @@
-const utils = require("../utils");
+const utils = require('../utils');
 
 module.exports = (client) => {
-  utils.logger.info(
-    `Logged in as ${client.bot.user.tag} (${client.bot.user.id})`
-  );
+    utils.logger.info(
+        `Logged in as ${client.bot.user.tag} (${client.bot.user.id})`,
+    );
 };
