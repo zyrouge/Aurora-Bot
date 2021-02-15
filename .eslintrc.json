@@ -2,10 +2,9 @@
 	"extends": "eslint:recommended",
 	"env": {
 		"node": true,
-		"es6": true,
-		"jquery": true,
+		"es6": false,
 		"commonjs": true,
-		"browser": true
+		"browser": false
 	},
 	"parserOptions": {
 		"ecmaVersion": 2019
