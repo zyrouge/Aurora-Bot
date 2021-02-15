@@ -20,7 +20,7 @@ class AuroraClient {
     }
 
     connect() {
-        return this.bot.login(this.settings.token);
+        return this.bot.login(this.settings);
     }
 }
 
