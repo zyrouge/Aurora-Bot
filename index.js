@@ -1,1 +1,3 @@
-require('./src');
+const main = require('./src');
+
+main();
