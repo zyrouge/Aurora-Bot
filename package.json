@@ -22,7 +22,7 @@
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
     "fs-extra": "^9.0.1",
-    "inquirer": "^7.3.3",
+    "inquirer": "^8.0.0",
     "log-symbols": "^4.0.0",
     "ora": "^5.1.0",
     "simple-git": "^2.21.0"
