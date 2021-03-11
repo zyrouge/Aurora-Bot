@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "aurora": "file:Aurora",
-    "axios": "^0.19.2",
+    "axios": ">=0.21.1",
     "body-parser": "^1.19.0",
     "canvas": "^2.6.1",
     "chalk": "^4.0.0",
@@ -32,7 +32,7 @@
     "express-session": "^1.17.1",
     "helmet": "^4.1.1",
     "lodash": "^4.17.15",
-    "marked": "^1.1.0",
+    "marked": ">=2.0.0",
     "memorystore": "^1.6.2",
     "millify": "^3.2.1",
     "moment": "^2.26.0",
